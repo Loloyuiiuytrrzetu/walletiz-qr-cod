@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bordeaux: #7B1E2B;
+  --bordeaux-dark: #5C1620;
+}
+
+html, body {
+  background: #fafafa;
+  color: #1a1a1a;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 1023px) {
+  .font-display.text-5xl { font-size: 2rem; line-height: 1.1; }
+  main { padding: 1rem !important; }
+}
+
+.btn-bordeaux {
+  @apply bg-bordeaux-700 hover:bg-bordeaux-800 text-white font-medium rounded-xl px-4 py-2.5 transition-colors;
+}
+
+.card {
+  @apply bg-white rounded-2xl border border-neutral-200/70 shadow-sm;
+}
+
+.stat-card {
+  @apply bg-white rounded-2xl border border-neutral-200/70 p-5;
+}
+
+.sidebar-link {
+  @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-600 hover:bg-neutral-100 transition-colors;
+}
+
+.sidebar-link.active {
+  @apply bg-bordeaux-50 text-bordeaux-700 font-medium;
+}
+
+.section-label {
+  @apply text-[11px] font-semibold uppercase tracking-wider text-neutral-400 px-3 mt-5 mb-2;
+}
