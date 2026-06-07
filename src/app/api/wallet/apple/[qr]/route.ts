@@ -12,7 +12,7 @@ export async function GET(_: Request, { params }: { params: { qr: string } }) {
 
   try {
     const buffer = await buildApplePass(customer.businesses, card, customer, cc ?? { stamps: 0 });
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/vnd.apple.pkpass",
         "Content-Disposition": `attachment; filename="walletiz-${customer.qr_code}.pkpass"`,
