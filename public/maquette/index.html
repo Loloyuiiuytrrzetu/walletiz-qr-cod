@@ -1,0 +1,1881 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Walletiz — La fidélité digitale pour les boutiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
+<style>
+  :root {
+    --burgundy: #7a1232;
+    --burgundy-dark: #5a0d24;
+    --burgundy-light: #9a1a40;
+    --cream: #ffffff;
+    --cream-2: #ffffff;
+    --ink: #0f0f10;
+    --ink-2: #1a1a1c;
+    --gray-1: #f7f5f2;
+    --gray-2: #e8e3dc;
+    --gray-3: #b8b1a8;
+    --gray-4: #6b6660;
+    --gray-5: #2a2826;
+    --success: #1f7a4d;
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 28px;
+    --shadow-sm: 0 1px 2px rgba(15,15,16,0.04), 0 1px 3px rgba(15,15,16,0.06);
+    --shadow: 0 4px 12px rgba(15,15,16,0.06), 0 12px 32px rgba(15,15,16,0.08);
+    --shadow-lg: 0 24px 60px rgba(15,15,16,0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { overflow-x: hidden; }
+  body { overflow-x: hidden; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  body.dark {
+    background: var(--ink);
+    color: var(--cream);
+  }
+  h1, h2, h3, h4 { font-family: 'Inter Tight', sans-serif; letter-spacing: -0.02em; margin: 0; line-height: 1.05; }
+  p { margin: 0; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(253, 248, 243, 0.78);
+    border-bottom: 1px solid var(--gray-2);
+  }
+  body.dark .nav { background: rgba(15,15,16,0.78); border-bottom-color: #2a2826; }
+  .nav-inner {
+    max-width: 1280px; margin: 0 auto; padding: 16px 32px;
+    display: flex; align-items: center; gap: 40px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--burgundy);
+    display: grid; place-items: center;
+    overflow: hidden;
+  }
+  .brand-logo img { width: 100%; height: 100%; object-fit: cover; }
+  .brand-name { font-family: 'Inter Tight'; font-weight: 700; font-size: 19px; letter-spacing: -0.01em; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--gray-4); font-weight: 500; }
+  body.dark .nav-links { color: var(--gray-3); }
+  .nav-links a:hover { color: var(--burgundy); }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+
+  /* ============ HAMBURGER + MOBILE MENU ============ */
+  .nav-burger {
+    display: none;
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid var(--gray-2);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    padding: 0;
+  }
+  .nav-burger:hover { border-color: var(--burgundy); }
+  .nav-burger span {
+    display: block;
+    width: 18px; height: 2px;
+    background: var(--ink);
+    border-radius: 1px;
+    transition: transform .25s ease, opacity .2s ease;
+    transform-origin: center;
+  }
+  body.menu-open .nav-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  body.menu-open .nav-burger span:nth-child(2) { opacity: 0; }
+  body.menu-open .nav-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0; right: 0;
+    width: 100%; max-width: 380px; height: 100vh; height: 100dvh;
+    background: #fff;
+    box-shadow: -24px 0 60px rgba(15,15,16,0.18);
+    z-index: 200;
+    padding: 18px 24px 32px;
+    transform: translateX(100%);
+    transition: transform .32s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    visibility: hidden;
+  }
+  .mobile-menu.open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,15,16,0.45);
+    backdrop-filter: blur(2px);
+    z-index: 199;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .mobile-menu-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--gray-2);
+    margin-bottom: 8px;
+  }
+  .mobile-menu-close {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: var(--gray-1);
+    border: none;
+    display: grid; place-items: center;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .mobile-menu-close:hover { background: var(--burgundy); color: #fff; }
+  .mobile-menu-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 0;
+  }
+  .mobile-menu-links a {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--gray-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: color .15s, padding-left .2s ease;
+  }
+  .mobile-menu-links a::after {
+    content: "→";
+    color: var(--gray-3);
+    font-size: 18px;
+    transition: transform .2s ease, color .15s;
+  }
+  .mobile-menu-links a:hover,
+  .mobile-menu-links a:focus-visible {
+    color: var(--burgundy);
+    padding-left: 8px;
+    outline: none;
+  }
+  .mobile-menu-links a:hover::after,
+  .mobile-menu-links a:focus-visible::after {
+    color: var(--burgundy);
+    transform: translateX(4px);
+  }
+  .mobile-menu-cta {
+    margin-top: auto;
+    padding-top: 24px;
+  }
+  .mobile-menu-cta .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px 24px;
+    font-size: 15px;
+  }
+  body.menu-open { overflow: hidden; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 14px;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .btn-ghost { color: var(--ink); }
+  body.dark .btn-ghost { color: var(--cream); }
+  .btn-ghost:hover { background: var(--gray-1); }
+  body.dark .btn-ghost:hover { background: var(--ink-2); }
+  .btn-primary {
+    background: var(--burgundy); color: #fff;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 6px 18px rgba(122,18,50,0.28);
+  }
+  .btn-primary:hover { background: var(--burgundy-dark); transform: translateY(-1px); }
+  .btn-lg { padding: 14px 24px; font-size: 15px; border-radius: 12px; }
+  .btn-outline {
+    border: 1px solid var(--gray-2); color: var(--ink); background: transparent;
+  }
+  body.dark .btn-outline { border-color: #3a3733; color: var(--cream); }
+  .btn-outline:hover { border-color: var(--burgundy); color: var(--burgundy); }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ HERO ============ */
+  .hero { padding: 80px 0 100px; position: relative; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px;
+    background: rgba(122,18,50,0.08); color: var(--burgundy);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    border: 1px solid rgba(122,18,50,0.15);
+  }
+  body.dark .eyebrow { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #d99eb0; }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--burgundy); }
+  .hero h1 {
+    font-size: 68px; font-weight: 700; margin: 20px 0 24px;
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; color: var(--burgundy); font-weight: 700; }
+  .hero-sub { font-size: 18px; color: var(--gray-4); max-width: 540px; line-height: 1.55; }
+  body.dark .hero-sub { color: var(--gray-3); }
+  .hero-actions { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero-trust { margin-top: 36px; display: flex; gap: 28px; font-size: 13px; color: var(--gray-4); }
+  body.dark .hero-trust { color: var(--gray-3); }
+  .hero-trust span { display: inline-flex; align-items: center; gap: 8px; }
+  .hero-trust svg { color: var(--burgundy); }
+  .hero-claim {
+    margin-top: 20px;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--burgundy);
+    letter-spacing: -0.01em;
+    max-width: 480px;
+  }
+  .hero-claim::before {
+    content: "★";
+    margin-right: 8px;
+    color: var(--burgundy);
+  }
+
+  /* ============ HERO MOCKUP ============ */
+  .hero-mockup {
+    position: relative; height: 580px;
+  }
+  .phone {
+    position: absolute; right: 0; top: 20px;
+    width: 280px; height: 560px; border-radius: 38px;
+    background: var(--ink); padding: 8px;
+    box-shadow: var(--shadow-lg);
+    z-index: 2;
+  }
+  .phone-screen {
+    width: 100%; height: 100%; border-radius: 32px;
+    background: linear-gradient(160deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
+    overflow: hidden; position: relative;
+    padding: 28px 18px;
+    color: #fff;
+  }
+  .phone-status { display: flex; justify-content: space-between; font-size: 11px; opacity: 0.8; font-weight: 600; margin-bottom: 18px; }
+  .phone-greeting { font-size: 12px; opacity: 0.7; }
+  .phone-name { font-family: 'Inter Tight'; font-size: 22px; font-weight: 700; margin-top: 2px; }
+  .loyalty-card {
+    margin-top: 22px; border-radius: 16px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 16px;
+  }
+  .loyalty-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .loyalty-shop { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; }
+  .loyalty-shop-name { font-family: 'Inter Tight'; font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .loyalty-tier { font-size: 10px; padding: 3px 8px; background: rgba(255,255,255,0.18); border-radius: 999px; font-weight: 600; }
+  .stamps-grid { margin-top: 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .stamp {
+    aspect-ratio: 1; border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px dashed rgba(255,255,255,0.2);
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .stamp.filled { background: #fff; color: var(--burgundy); border-style: solid; border-color: #fff; }
+  .stamp.filled svg { width: 14px; height: 14px; }
+  .loyalty-progress { margin-top: 14px; font-size: 11px; opacity: 0.85; display: flex; justify-content: space-between; }
+  .phone-footer-card {
+    margin-top: 14px; padding: 12px 14px; background: rgba(255,255,255,0.08);
+    border-radius: 12px; display: flex; align-items: center; gap: 12px;
+  }
+  .phone-footer-card .ico { width: 32px; height: 32px; border-radius: 8px; background: #fff; color: var(--burgundy); display:grid; place-items:center; }
+  .phone-footer-card .lbl { font-size: 12px; opacity: 0.75; }
+  .phone-footer-card .val { font-family: 'Inter Tight'; font-size: 14px; font-weight: 700; }
+
+  /* Dashboard floating card */
+  .dash-card {
+    position: absolute; left: 0; top: 40px;
+    width: 360px; padding: 22px;
+    background: #fff; border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--gray-2);
+    z-index: 1;
+  }
+  body.dark .dash-card { background: #fff; border-color: var(--gray-2); color: var(--ink); }
+  .live-head {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Inter Tight'; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.14em; color: var(--gray-4);
+    margin-bottom: 20px;
+  }
+  .live-head .pulse {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #1f7a4d; position: relative;
+  }
+  .live-head .pulse::after {
+    content: ""; position: absolute; inset: -4px;
+    border-radius: 50%; border: 2px solid #1f7a4d;
+    animation: live-pulse 1.8s ease-out infinite;
+  }
+  @keyframes live-pulse {
+    0% { transform: scale(0.7); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  .live-grid {
+    display: grid; grid-template-columns: 1fr; gap: 14px;
+  }
+  .live-stats { display: grid; gap: 8px; }
+  .live-stat {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px 10px 10px; border-radius: 12px;
+    background: #f7f5f2;
+    border: 1px solid var(--gray-2);
+    position: relative;
+  }
+  body.dark .live-stat { background: #f7f5f2; border-color: var(--gray-2); color: var(--ink); }
+  .live-stat .bar-side {
+    width: 4px; height: 30px; border-radius: 2px;
+    background: #5dc1f7;
+  }
+  .live-stat.t2 .bar-side { background: var(--burgundy); }
+  .live-stat.t3 .bar-side { background: #4ec27a; }
+  .live-stat-body { flex: 1; min-width: 0; }
+  .live-stat-val {
+    font-family: 'Inter Tight'; font-weight: 700;
+    font-size: 22px; line-height: 1; letter-spacing: -0.02em;
+  }
+  .live-stat-lbl { font-size: 11px; color: var(--gray-4); margin-top: 3px; }
+  body.dark .live-stat-lbl { color: var(--gray-4); }
+  .live-stat-delta {
+    font-family: 'Inter Tight'; font-size: 11px; font-weight: 700;
+    color: #5dc1f7;
+    background: rgba(93,193,247,0.12);
+    padding: 3px 7px; border-radius: 999px;
+  }
+  .live-stat.t2 .live-stat-delta { color: var(--burgundy); background: rgba(122,18,50,0.1); }
+  .live-stat.t3 .live-stat-delta { color: #4ec27a; background: rgba(78,194,122,0.12); }
+  /* mini bar chart */
+  .live-chart {
+    display: flex; flex-direction: column;
+  }
+  .live-bars {
+    flex: 1; display: flex; align-items: flex-end;
+    gap: 5px; padding: 6px 0 8px;
+    min-height: 80px;
+  }
+  .live-bars .lb {
+    flex: 1; background: #cfe9fa;
+    border-radius: 6px 6px 0 0;
+    transform-origin: bottom;
+    animation: bar-rise 2.6s ease-in-out infinite;
+  }
+  .live-bars .lb.peak { background: var(--burgundy); }
+  .live-bars .lb:nth-child(1) { height: 30%; animation-delay: 0s; }
+  .live-bars .lb:nth-child(2) { height: 45%; animation-delay: .15s; }
+  .live-bars .lb:nth-child(3) { height: 38%; animation-delay: .3s; }
+  .live-bars .lb:nth-child(4) { height: 60%; animation-delay: .45s; }
+  .live-bars .lb:nth-child(5) { height: 90%; animation-delay: .6s; }
+  .live-bars .lb:nth-child(6) { height: 65%; animation-delay: .75s; }
+  .live-bars .lb:nth-child(7) { height: 35%; animation-delay: .9s; }
+  @keyframes bar-rise {
+    0%, 100% { transform: scaleY(0.92); }
+    50% { transform: scaleY(1); }
+  }
+  .live-days {
+    display: flex; gap: 8px; font-size: 12px;
+    color: var(--gray-4); font-weight: 600;
+  }
+  body.dark .live-days { color: var(--gray-4); }
+  .live-days span { flex: 1; text-align: center; }
+  .live-days span.active { color: var(--burgundy); }
+  .dash-pill { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: rgba(31,122,77,0.1); color: var(--success); font-weight: 600; }
+  .dash-stat { font-family: 'Inter Tight'; font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
+  .dash-delta { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 2px; }
+  .dash-chart { margin-top: 14px; height: 64px; display: flex; align-items: flex-end; gap: 6px; }
+  .bar { flex: 1; background: var(--burgundy); border-radius: 3px; opacity: 0.85; }
+  .bar:nth-child(1) { height: 30%; }
+  .bar:nth-child(2) { height: 45%; }
+  .bar:nth-child(3) { height: 38%; }
+  .bar:nth-child(4) { height: 60%; }
+  .bar:nth-child(5) { height: 52%; }
+  .bar:nth-child(6) { height: 78%; }
+  .bar:nth-child(7) { height: 95%; }
+
+  /* Notif card */
+  .notif {
+    position: absolute; left: 30px; bottom: -20px;
+    width: 300px; padding: 14px 16px;
+    background: #fff; border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--gray-2);
+    display: flex; gap: 12px; align-items: center;
+    z-index: 3;
+  }
+  .phone { display: block; }
+  body.dark .notif { background: var(--ink-2); border-color: #2a2826; color: var(--cream); }
+  .notif-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(122,18,50,0.1); color: var(--burgundy); display: grid; place-items: center; flex-shrink: 0; }
+  .notif-title { font-size: 13px; font-weight: 600; }
+  .notif-sub { font-size: 11px; color: var(--gray-4); margin-top: 2px; }
+  body.dark .notif-sub { color: var(--gray-3); }
+
+  /* Logo strip */
+  .logo-strip {
+    border-top: 1px solid var(--gray-2);
+    border-bottom: 1px solid var(--gray-2);
+    padding: 28px 0;
+    margin-top: 40px;
+  }
+  body.dark .logo-strip { border-color: #2a2826; }
+  .logo-strip-inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .logo-strip-label { font-size: 12px; color: var(--gray-4); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .logo-strip-list { display: flex; gap: 40px; flex-wrap: wrap; align-items: center; }
+  .fake-logo { font-family: 'Inter Tight'; font-weight: 700; font-size: 18px; color: var(--gray-3); letter-spacing: -0.02em; }
+  .fake-logo.italic { font-style: italic; }
+  .fake-logo.serif { font-family: Georgia, serif; }
+
+  /* ============ SECTION ============ */
+  section { padding: 100px 0; }
+  .section-head { max-width: 720px; margin-bottom: 56px; }
+  .section-head .eyebrow { margin-bottom: 16px; }
+  .section-head h2 { font-size: 48px; font-weight: 700; margin-bottom: 16px; text-wrap: balance; }
+  .section-head p { font-size: 17px; color: var(--gray-4); max-width: 600px; }
+  body.dark .section-head p { color: var(--gray-3); }
+
+  /* ============ HOW IT WORKS ============ */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step.step-wide {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 56px;
+    align-items: center;
+    padding: 48px 56px;
+  }
+  .step.step-wide .step-num { background: var(--burgundy); color: #fff; width: 84px; height: 84px; font-size: 38px; border-radius: 18px; margin-bottom: 0; }
+  .step.step-wide h3 { font-size: 32px; margin-bottom: 10px; }
+  .step.step-wide p { font-size: 16px; max-width: 560px; }
+  .step.step-wide .step-illu { margin-top: 0; height: 180px; width: 420px; padding: 18px; }
+  @media (max-width: 720px) {
+    .step.step-wide { grid-template-columns: 1fr; padding: 24px; }
+    .step.step-wide .step-illu { width: 100%; }
+  }
+  .step {
+    background: #fff; border: 1px solid var(--gray-2); border-radius: 18px;
+    padding: 28px; position: relative;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+  }
+  body.dark .step { background: var(--ink-2); border-color: #2a2826; }
+  .step:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--burgundy); }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--burgundy); color: #fff;
+    display: grid; place-items: center;
+    font-family: 'Inter Tight'; font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--gray-4); line-height: 1.5; }
+  body.dark .step p { color: var(--gray-3); }
+  .step-illu {
+    margin-top: 20px; height: 100px; border-radius: 12px;
+    background: var(--cream-2);
+    display: grid; place-items: center;
+    overflow: hidden; position: relative;
+  }
+  body.dark .step-illu { background: #232120; }
+
+  /* Mini phone for step illu */
+  .step-illu .phone {
+    position: relative; right: auto; top: auto;
+    transform: scale(0.4); transform-origin: center center;
+    flex-shrink: 0;
+  }
+  .step-illu.illu-phone {
+    height: 240px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* notifications animation for step 4 */
+  .step-illu-notifs { overflow: hidden; display: flex; align-items: center; }
+  .sn-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .sn-row {
+    display: flex; align-items: center; gap: 10px;
+    background: #fff; border: 1px solid var(--gray-2);
+    border-radius: 12px; padding: 11px 14px;
+    font-size: 13px; font-weight: 500; color: var(--ink);
+    box-shadow: 0 2px 6px rgba(15,15,16,0.04);
+    opacity: 0; transform: translateX(-20px);
+    animation: sn-slide 4s ease-in-out infinite;
+  }
+  .sn-row:nth-child(2) { animation-delay: 0.4s; }
+  .sn-row:nth-child(3) { animation-delay: 0.8s; }
+  .sn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .sn-green { background: #22c55e; }
+  .sn-bordeaux { background: var(--burgundy); }
+  .sn-blue { background: #3b82f6; }
+  @keyframes sn-slide {
+    0%   { opacity: 0; transform: translateX(-20px); }
+    15%  { opacity: 1; transform: translateX(0); }
+    70%  { opacity: 1; transform: translateX(0); }
+    85%  { opacity: 0; transform: translateX(20px); }
+    100% { opacity: 0; transform: translateX(20px); }
+  }
+
+  /* ============ STORY SECTIONS ============ */
+  .story { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; margin-top: 80px; }
+  .story.reverse { direction: rtl; }
+  .story.reverse > * { direction: ltr; }
+  .story h3 { font-size: 36px; font-weight: 700; margin-bottom: 16px; line-height: 1.1; }
+  .story p { font-size: 16px; color: var(--gray-4); line-height: 1.55; margin-bottom: 24px; }
+  body.dark .story p { color: var(--gray-3); }
+  .story-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .story-list li { display: flex; gap: 14px; align-items: center; font-size: 15px; font-weight: 500; }
+  .story-list .ico { width: 36px; height: 36px; border-radius: 10px; background: rgba(122,18,50,0.08); color: var(--burgundy); display: grid; place-items: center; flex-shrink: 0; }
+  body.dark .story-list .ico { background: rgba(122,18,50,0.18); color: #ff6b8a; }
+  .story-illu {
+    aspect-ratio: 4/3; border-radius: 22px; overflow: hidden;
+    background: #fdf8f3;
+    position: relative; box-shadow: var(--shadow);
+  }
+  body.dark .story-illu { background: #1a1816; }
+  .story-illu img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story-illu svg { width: 100%; height: 100%; display: block; }
+  .story.story-stack { grid-template-columns: 1fr; gap: 32px; }
+  .story.story-stack .story-illu { max-width: 720px; margin: 0 auto; aspect-ratio: 16/9; }
+  @media (max-width: 960px) { .story { grid-template-columns: 1fr; } .story.reverse { direction: ltr; } }
+
+  /* ============ DEMO ============ */
+  .demo-wrap {
+    background: var(--ink); border-radius: 28px;
+    padding: 40px;
+    color: #fff;
+    display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px;
+    align-items: center;
+    border: 1px solid #2a2826;
+    background-image: radial-gradient(circle at 0% 0%, rgba(122,18,50,0.4) 0%, transparent 50%);
+  }
+  .demo-text h2 { font-size: 38px; margin-bottom: 16px; }
+  .demo-text p { color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 24px; }
+  .demo-builder {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px; padding: 24px;
+  }
+  .demo-builder-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .demo-builder-title { font-family: 'Inter Tight'; font-weight: 700; font-size: 15px; }
+  .demo-builder-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .demo-step-pill { font-family: 'JetBrains Mono'; font-size: 11px; padding: 4px 10px; background: rgba(122,18,50,0.3); border-radius: 6px; color: #ffb3c5; }
+  .demo-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .demo-form-row label { font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 500; }
+  .demo-form-row input, .demo-form-row select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: #fff; font-size: 14px; font-family: inherit;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .demo-form-row input:focus, .demo-form-row select:focus { border-color: var(--burgundy-light); }
+  .demo-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .demo-color-row { display: flex; gap: 8px; }
+  .demo-color {
+    width: 32px; height: 32px; border-radius: 8px;
+    cursor: pointer; border: 2px solid transparent;
+    transition: transform .12s;
+  }
+  .demo-color:hover { transform: scale(1.1); }
+  .demo-color.active { border-color: #fff; }
+  .demo-preview {
+    margin-top: 18px; padding: 16px;
+    background: rgba(0,0,0,0.3); border-radius: 12px;
+    border: 1px dashed rgba(255,255,255,0.15);
+  }
+  .demo-preview-card {
+    background: var(--demo-color, var(--burgundy));
+    border-radius: 14px; padding: 20px;
+    color: #fff;
+    transition: background .25s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .demo-preview-shop { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.08em; }
+  .demo-preview-name { font-family: 'Inter Tight'; font-size: 20px; font-weight: 700; margin: 4px 0 14px; }
+  .demo-preview-stamps { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+  .demo-preview-stamp { aspect-ratio: 1; background: rgba(255,255,255,0.15); border-radius: 4px; }
+  .demo-preview-stamp.on { background: #fff; }
+  .demo-preview-bottom { margin-top: 12px; font-size: 11px; opacity: 0.85; }
+  .demo-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .demo-btn-prev, .demo-btn-next {
+    flex: 1; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 14px;
+    transition: background .12s;
+  }
+  .demo-btn-prev { background: rgba(255,255,255,0.06); color: #fff; }
+  .demo-btn-prev:hover { background: rgba(255,255,255,0.12); }
+  .demo-btn-next { background: var(--burgundy); color: #fff; }
+  .demo-btn-next:hover { background: var(--burgundy-light); }
+  .demo-success {
+    text-align: center; padding: 32px 16px;
+  }
+  .demo-success-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--burgundy); display: grid; place-items: center; margin: 0 auto 16px; }
+  .demo-success h4 { font-family: 'Inter Tight'; font-size: 20px; margin-bottom: 8px; }
+  .demo-success p { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 20px; }
+
+  /* ============ FEATURES ============ */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  /* ============ ICON ANIMATIONS ============ */
+  .feature-ico, .step-num, .story-list .ico, .security-list .ico, .feature-revenue,
+  .price-feats svg, .hero-trust svg, .testi-stars, .notif-icon {
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1), color .25s, background .25s, box-shadow .25s;
+  }
+  .feature:hover .feature-ico { transform: rotate(-6deg) scale(1.1); }
+  .feature:hover .feature-ico svg { animation: icon-pulse 0.6s ease; }
+  .step:hover .step-num { transform: scale(1.1) rotate(-4deg); }
+  .story-list li:hover .ico { transform: translateX(4px) scale(1.08); }
+  .security-list li:hover .ico { transform: scale(1.15) rotate(8deg); }
+  .price-feats li:hover svg { transform: scale(1.3) rotate(15deg); }
+  .hero-trust span:hover svg { transform: scale(1.2); animation: icon-bounce 0.5s ease; }
+  .testi:hover .testi-stars { animation: stars-wiggle 0.8s ease; }
+  .notif:hover .notif-icon { animation: bell-shake 0.6s ease; }
+  @keyframes icon-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+  @keyframes icon-bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3) translateY(-2px); } }
+  @keyframes stars-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+  @keyframes bell-shake { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+  @keyframes float-up { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+  /* Revenue feature card */
+  .feature-revenue {
+    background: linear-gradient(135deg, #1f7a4d 0%, #145c39 100%);
+    color: #fff; border: 1px solid #1f7a4d;
+    position: relative; overflow: hidden;
+  }
+  body.dark .feature-revenue { background: linear-gradient(135deg, #1f7a4d 0%, #0c3a23 100%); }
+  .feature-revenue:hover { transform: translateY(-4px); border-color: #2da872; }
+  .feature-revenue::before {
+    content: ""; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .feature-revenue .feature-ico { background: rgba(255,255,255,0.15); color: #fff; }
+  .feature-revenue:hover .feature-ico { animation: float-up 1.4s ease infinite; }
+  .feature-revenue h3 { color: #fff; font-size: 22px; margin-bottom: 6px; }
+  .feature-revenue p { color: rgba(255,255,255,0.85); }
+  .revenue-value {
+    font-family: 'Inter Tight'; font-size: 44px; font-weight: 700; line-height: 1;
+    letter-spacing: -0.03em; margin: 14px 0 6px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .revenue-value .arrow {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.2);
+    display: inline-grid; place-items: center;
+    animation: float-up 2s ease infinite;
+  }
+  .revenue-bars {
+    display: flex; gap: 4px; align-items: flex-end; height: 32px; margin-top: 14px;
+  }
+  .revenue-bars i {
+    flex: 1; background: rgba(255,255,255,0.35); border-radius: 2px;
+    transform-origin: bottom; animation: bar-grow 2.5s ease infinite;
+  }
+  .revenue-bars i:nth-child(1) { height: 35%; animation-delay: 0s; }
+  .revenue-bars i:nth-child(2) { height: 50%; animation-delay: 0.15s; }
+  .revenue-bars i:nth-child(3) { height: 42%; animation-delay: 0.3s; }
+  .revenue-bars i:nth-child(4) { height: 65%; animation-delay: 0.45s; }
+  .revenue-bars i:nth-child(5) { height: 75%; animation-delay: 0.6s; }
+  .revenue-bars i:nth-child(6) { height: 88%; animation-delay: 0.75s; background: #fff; }
+  .revenue-bars i:nth-child(7) { height: 100%; animation-delay: 0.9s; background: #fff; }
+  .revenue-video {
+    margin-top: 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .revenue-video video {
+    width: 100%; height: auto; display: block;
+  }
+  @keyframes bar-grow {
+    0%, 100% { transform: scaleY(0.85); opacity: 0.7; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+  .feature {
+    background: #fff; border: 1px solid var(--gray-2); border-radius: 18px;
+    padding: 32px; transition: border-color .2s, transform .2s;
+    display: flex; flex-direction: column;
+  }
+  body.dark .feature { background: var(--ink-2); border-color: #2a2826; }
+  .feature:hover { border-color: var(--burgundy); transform: translateY(-2px); }
+  .feature-ico {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(122,18,50,0.08); color: var(--burgundy);
+    display: grid; place-items: center; margin-bottom: 18px;
+  }
+  body.dark .feature-ico { background: rgba(122,18,50,0.18); color: #ff6b8a; }
+  .feature h3 { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { font-size: 14px; color: var(--gray-4); line-height: 1.55; }
+  body.dark .feature p { color: var(--gray-3); }
+  .feature-large {
+    grid-column: span 2;
+    background: var(--burgundy); color: #fff;
+    border: 1px solid var(--burgundy);
+    background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,0.1) 0%, transparent 60%);
+  }
+  body.dark .feature-large { background: var(--burgundy); }
+  .feature-large h3 { font-size: 28px; }
+  .feature-large p { color: rgba(255,255,255,0.85); font-size: 15px; max-width: 480px; }
+  .feature-large .feature-ico { background: rgba(255,255,255,0.15); color: #fff; }
+
+  /* ============ TESTIMONIALS ============ */
+  .testi-marquee { overflow: hidden; position: relative; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .testi-track { display: flex; gap: 20px; width: max-content; animation: testi-scroll 50s linear infinite; }
+  .testi-marquee:hover .testi-track { animation-play-state: paused; }
+  @keyframes testi-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .testi {
+    background: #fff; border: 1px solid var(--gray-2); border-radius: 18px;
+    padding: 28px; width: 380px; flex-shrink: 0;
+  }
+  body.dark .testi { background: var(--ink-2); border-color: #2a2826; }
+  .testi-stars { color: var(--burgundy); font-size: 14px; margin-bottom: 14px; letter-spacing: 2px; }
+  .testi-quote { font-family: 'Inter Tight'; font-size: 17px; line-height: 1.45; font-weight: 500; margin-bottom: 20px; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .testi-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--cream-2); display: grid; place-items: center; overflow: hidden; flex-shrink: 0; font-size: 14px; }
+  .testi-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  body.dark .testi-avatar { background: var(--ink); color: #ff6b8a; }
+  .testi-name { font-weight: 600; font-size: 14px; }
+  .testi-role { font-size: 12px; color: var(--gray-4); }
+  body.dark .testi-role { color: var(--gray-3); }
+
+  /* ============ PRICING ============ */
+  .pricing-tabs { display: inline-flex; padding: 4px; background: var(--gray-1); border-radius: 12px; margin-bottom: 32px; }
+  body.dark .pricing-tabs { background: var(--ink-2); }
+  .pricing-tab { padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--gray-4); }
+  .pricing-tab.active { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
+  body.dark .pricing-tab.active { background: var(--gray-5); color: var(--cream); }
+  .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 880px; margin: 0 auto; }
+  .price-card {
+    background: #fff; border: 1px solid var(--gray-2); border-radius: 18px;
+    padding: 32px;
+    display: flex; flex-direction: column;
+  }
+  body.dark .price-card { background: var(--ink-2); border-color: #2a2826; }
+  .price-card.featured {
+    background: var(--ink); color: #fff; border: 1px solid var(--ink);
+    position: relative;
+    background-image: radial-gradient(circle at 50% 0%, rgba(122,18,50,0.4) 0%, transparent 60%);
+  }
+  body.dark .price-card.featured { background: var(--burgundy); border-color: var(--burgundy); }
+  .price-badge { position: absolute; top: -12px; left: 32px; padding: 4px 12px; background: var(--burgundy); color: #fff; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+  .price-name { font-family: 'Inter Tight'; font-size: 14px; font-weight: 600; color: var(--gray-4); text-transform: uppercase; letter-spacing: 0.08em; }
+  .price-card.featured .price-name { color: rgba(255,255,255,0.7); }
+  .price-amount { font-family: 'Inter Tight'; font-size: 56px; font-weight: 700; letter-spacing: -0.03em; margin: 12px 0 4px; }
+  .price-amount span { font-size: 16px; color: var(--gray-4); font-weight: 500; }
+  .price-card.featured .price-amount span { color: rgba(255,255,255,0.6); }
+  .price-desc { font-size: 14px; color: var(--gray-4); margin-bottom: 28px; }
+  .price-card.featured .price-desc { color: rgba(255,255,255,0.7); }
+  .price-feats { list-style: none; padding: 0; margin: 0 0 28px; flex: 1; }
+  .price-feats li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; font-size: 14px; }
+  .price-feats svg { color: var(--burgundy); flex-shrink: 0; margin-top: 2px; }
+  .price-card.featured .price-feats svg { color: #ffb3c5; }
+  .price-cta {
+    padding: 14px; border-radius: 12px; text-align: center;
+    font-weight: 600; font-size: 14px;
+    background: var(--cream-2); color: var(--ink);
+  }
+  body.dark .price-card .price-cta { background: var(--gray-5); color: var(--cream); }
+  .price-card.featured .price-cta { background: #fff; color: var(--ink); }
+  .price-card.featured .price-cta:hover { background: var(--cream); }
+
+  /* ============ SECURITY ============ */
+  .security {
+    background: var(--ink); color: #fff; border-radius: 28px; padding: 56px;
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: center;
+    background-image:
+      radial-gradient(circle at 100% 100%, rgba(122,18,50,0.3) 0%, transparent 60%),
+      radial-gradient(circle at 0% 0%, rgba(122,18,50,0.15) 0%, transparent 50%);
+  }
+  .security h2 { font-size: 40px; margin-bottom: 18px; }
+  .security p { color: rgba(255,255,255,0.7); margin-bottom: 28px; font-size: 16px; }
+  .security-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+  .security-list li { display: flex; gap: 14px; align-items: center; font-size: 14px; }
+  .security-list .ico {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    display: grid; place-items: center;
+    color: #ffb3c5; flex-shrink: 0;
+  }
+  .security-badges {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .security-badge {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 22px;
+  }
+  .security-badge .num {
+    font-family: 'Inter Tight'; font-size: 32px; font-weight: 700;
+    background: linear-gradient(135deg, #fff 0%, #ffb3c5 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .security-badge .lbl { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+  /* ============ FAQ ============ */
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; max-width: 980px; margin: 0 auto; }
+  .faq-item {
+    border-bottom: 1px solid var(--gray-2);
+    padding: 20px 0;
+    cursor: pointer;
+  }
+  body.dark .faq-item { border-color: #2a2826; }
+  .faq-q { display: flex; justify-content: space-between; align-items: center; gap: 16px; font-weight: 600; font-size: 16px; }
+  .faq-toggle {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--cream-2);
+    display: grid; place-items: center; flex-shrink: 0;
+    transition: transform .2s, background .2s;
+  }
+  body.dark .faq-toggle { background: var(--ink-2); }
+  .faq-item.open .faq-toggle { background: var(--burgundy); color: #fff; transform: rotate(45deg); }
+  .faq-a {
+    font-size: 14px; color: var(--gray-4); margin-top: 0; max-height: 0; overflow: hidden;
+    transition: max-height .25s ease, margin-top .25s ease;
+    line-height: 1.6;
+  }
+  body.dark .faq-a { color: var(--gray-3); }
+  .faq-item.open .faq-a { max-height: 200px; margin-top: 12px; }
+
+  /* ============ CTA ============ */
+  .cta-band {
+    background: var(--burgundy); color: #fff; border-radius: 28px;
+    padding: 64px; text-align: center;
+    background-image:
+      radial-gradient(circle at 0% 0%, rgba(255,255,255,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(0,0,0,0.2) 0%, transparent 50%);
+  }
+  .cta-band h2 { font-size: 48px; margin-bottom: 16px; }
+  .cta-band p { color: rgba(255,255,255,0.8); font-size: 17px; margin-bottom: 32px; max-width: 540px; margin-left: auto; margin-right: auto; }
+  .cta-actions { display: flex; gap: 12px; justify-content: center; }
+  .cta-actions .btn-primary { background: #fff; color: var(--burgundy); }
+  .cta-actions .btn-primary:hover { background: var(--cream); }
+  .cta-actions .btn-outline { border-color: rgba(255,255,255,0.3); color: #fff; }
+  .cta-actions .btn-outline:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.05); }
+
+  /* ============ FOOTER ============ */
+  footer { padding: 64px 0 32px; border-top: 1px solid var(--gray-2); margin-top: 80px; }
+  body.dark footer { border-color: #2a2826; }
+  .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 48px; }
+  .footer-brand p { font-size: 14px; color: var(--gray-4); max-width: 280px; margin-top: 14px; line-height: 1.55; }
+  body.dark .footer-brand p { color: var(--gray-3); }
+  .footer-col h4 { font-family: 'Inter'; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-4); margin-bottom: 14px; }
+  .footer-col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .footer-col a { font-size: 14px; color: var(--ink); }
+  body.dark .footer-col a { color: var(--cream); }
+  .footer-col a:hover { color: var(--burgundy); }
+  .footer-bottom {
+    border-top: 1px solid var(--gray-2); padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--gray-4);
+  }
+  body.dark .footer-bottom { border-color: #2a2826; color: var(--gray-3); }
+
+  @media (max-width: 1024px) {
+    .container { padding: 0 24px; }
+    .hero h1 { font-size: 56px; }
+    .section-head h2 { font-size: 40px; }
+    .nav-links { display: none; }
+    .nav-inner { padding: 14px 24px; }
+    section { padding: 80px 0; }
+    .hero { padding: 60px 0 80px; }
+    .hero-mockup { transform: scale(0.85); transform-origin: top right; }
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .nav-inner { padding: 12px 20px; gap: 12px; }
+    .brand-name { font-size: 17px; }
+    .brand-logo { width: 32px; height: 32px; }
+    .nav-cta-desktop { display: none; }
+    .nav-burger { display: flex; }
+
+    /* HERO */
+    .hero { padding: 40px 0 60px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero h1 { font-size: 38px; margin: 16px 0 18px; }
+    .hero-sub { font-size: 16px; }
+    .hero-actions { margin-top: 28px; }
+    .hero-actions .btn-lg { padding: 12px 18px; font-size: 14px; flex: 1; justify-content: center; }
+    .hero-trust { margin-top: 28px; gap: 18px; flex-wrap: wrap; font-size: 12px; }
+    .hero-claim { font-size: 14px; margin-top: 18px; }
+
+    /* HERO MOCKUP - stack everything vertically on mobile so all data is visible */
+    .hero-mockup {
+      position: static;
+      height: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      transform: none;
+      padding: 0;
+      overflow: visible;
+      width: 100%;
+    }
+    .phone {
+      position: relative;
+      right: auto; top: auto;
+      width: 280px; height: 560px;
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+    .dash-card {
+      position: relative;
+      left: auto; top: auto;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      transform: none;
+    }
+    .dash-card .live-stat-val { font-size: 22px; }
+    .dash-card .live-stat-lbl { font-size: 11px; }
+    .dash-card .live-stat { padding: 10px 12px 10px 10px; }
+    .dash-card .live-stat-delta { font-size: 11px; padding: 3px 7px; }
+
+    /* SECTIONS */
+    section { padding: 60px 0; }
+    .section-head { margin-bottom: 36px; }
+    .section-head h2 { font-size: 30px; }
+    .section-head p { font-size: 15px; }
+
+    /* HOW IT WORKS */
+    .steps { grid-template-columns: 1fr; gap: 16px; }
+    .step { padding: 24px; }
+    .step h3 { font-size: 17px; }
+    .step.step-wide {
+      grid-template-columns: 1fr;
+      padding: 28px 24px;
+      gap: 20px;
+      text-align: left;
+    }
+    .step.step-wide .step-num { width: 60px; height: 60px; font-size: 26px; border-radius: 14px; }
+    .step.step-wide h3 { font-size: 24px; }
+    .step.step-wide .step-illu { width: 100%; height: 140px; padding: 14px; }
+    .step-illu.illu-phone { height: 200px; }
+    .step-illu .phone { transform: scale(0.34); }
+
+    /* STORIES */
+    .story, .story.reverse { grid-template-columns: 1fr; direction: ltr; gap: 32px; margin-top: 56px; }
+    .story h3 { font-size: 26px; }
+    .story p { font-size: 15px; }
+    .story-illu { border-radius: 16px; }
+    .story.story-stack .story-illu { aspect-ratio: 4/3; }
+
+    /* SECURITY */
+    .security { padding: 36px 28px; border-radius: 22px; grid-template-columns: 1fr; gap: 32px; }
+    .security h2 { font-size: 28px; }
+    .security-badges { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .security-badge { padding: 16px; }
+    .security-badge .num { font-size: 26px; }
+
+    /* DEMO */
+    .demo-wrap { grid-template-columns: 1fr; gap: 28px; padding: 28px 22px; border-radius: 22px; }
+    .demo-text h2 { font-size: 26px; }
+    .demo-builder { padding: 18px; border-radius: 14px; }
+    .demo-form-grid { grid-template-columns: 1fr; gap: 10px; }
+
+    /* PRICING */
+    .pricing-grid { grid-template-columns: 1fr; gap: 16px; }
+    .price-card { padding: 26px; }
+    .price-amount { font-size: 44px; }
+
+    /* FEATURES */
+    .features { grid-template-columns: 1fr; gap: 16px; }
+    .feature { padding: 26px; }
+    .feature h3 { font-size: 18px; }
+    .feature-large { grid-column: auto; }
+    .feat-video, .feat-gif { max-width: 100%; }
+
+    /* TESTIMONIALS */
+    .testi { width: 280px; padding: 22px; }
+    .testi-quote { font-size: 15px; }
+
+    /* FAQ */
+    .faq-grid { grid-template-columns: 1fr; gap: 0 24px; }
+    .faq-q { font-size: 15px; }
+
+    /* CTA */
+    .cta-band { padding: 40px 24px; border-radius: 22px; }
+    .cta-band h2 { font-size: 30px; }
+    .cta-band p { font-size: 15px; }
+    .cta-actions { flex-direction: column; }
+    .cta-actions .btn { width: 100%; justify-content: center; }
+
+    /* FOOTER */
+    footer { padding: 48px 0 24px; margin-top: 56px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 32px; }
+    .footer-brand { grid-column: 1 / -1; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 0 16px; }
+    .nav-inner { padding: 10px 16px; }
+    .brand-name { font-size: 16px; }
+
+    .hero h1 { font-size: 32px; line-height: 1.1; }
+    .hero-actions { flex-direction: column; }
+    .hero-actions .btn { width: 100%; }
+    .hero-trust { gap: 14px; font-size: 12px; }
+    .hero-trust span { gap: 6px; }
+
+    .hero-mockup { min-height: 0; gap: 20px; }
+    .phone { width: 250px; height: 500px; padding: 6px; border-radius: 32px; }
+    .phone-screen { padding: 22px 14px; border-radius: 28px; }
+    .phone-name { font-size: 20px; }
+    .loyalty-card { padding: 14px; margin-top: 18px; }
+    .loyalty-shop-name { font-size: 14px; }
+    .dash-card {
+      width: 100%;
+      max-width: none;
+      padding: 18px;
+    }
+
+    .section-head h2 { font-size: 26px; }
+
+    .step.step-wide .step-num { width: 52px; height: 52px; font-size: 22px; }
+    .step.step-wide h3 { font-size: 21px; }
+    .step.step-wide .step-illu { height: 120px; }
+
+    .story h3 { font-size: 22px; }
+
+    .security h2 { font-size: 24px; }
+    .security-badges { grid-template-columns: 1fr; }
+
+    .price-amount { font-size: 38px; }
+    .price-card { padding: 22px; }
+    .price-badge { left: 22px; }
+
+    .demo-wrap { padding: 22px 18px; }
+    .demo-text h2 { font-size: 22px; }
+
+    .testi { width: calc(100vw - 60px); max-width: 320px; }
+
+    .cta-band h2 { font-size: 24px; }
+    .cta-band { padding: 32px 20px; }
+
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-brand { grid-column: auto; }
+  }
+  .feat-video {
+    margin-top: 16px;
+    max-width: 180px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .feat-video video,
+  .feat-video img {
+    width: 100%; height: auto; display: block;
+  }
+  .wallet-buttons {
+    margin-top: 40px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .wallet-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    font-family: inherit;
+  }
+  .wallet-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+  .wallet-btn--apple { background: #111; color: #fff; }
+  .wallet-btn--apple .wallet-icon { width: 14px; height: 14px; fill: #fff; }
+  .wallet-btn--google { background: #fff; color: #1a1a1a; border: 1px solid #e8e8e8; }
+  .wallet-btn--google .wallet-icon { width: 14px; height: 14px; }
+  .feat-gif {
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .feat-gif img {
+    width: 100%; height: auto; display: block;
+  }
+</style>
+</head>
+<body data-screen-label="Walletiz Marketing Site">
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-logo"><img src="assets/walletiz-logo.webp" alt="Walletiz" /></div>
+      <div class="brand-name">Walletiz</div>
+    </a>
+    <div class="nav-links">
+      <a href="#how">Comment ça marche</a>
+      <a href="#features">Avantages</a>
+      <a href="#testimonials">Témoignages</a>
+      <a href="#pricing">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="https://calendly.com/walletiz" target="_blank" rel="noopener" class="btn btn-primary nav-cta-desktop">Prendre rendez-vous</a>
+      <button class="nav-burger" id="navBurger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ MOBILE MENU ============ -->
+<div class="mobile-menu-backdrop" id="mobileMenuBackdrop" aria-hidden="true"></div>
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Menu principal">
+  <div class="mobile-menu-head">
+    <a href="#" class="brand">
+      <div class="brand-logo"><img src="assets/walletiz-logo.webp" alt="Walletiz" /></div>
+      <div class="brand-name">Walletiz</div>
+    </a>
+    <button class="mobile-menu-close" id="navClose" type="button" aria-label="Fermer le menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="mobile-menu-links">
+    <a href="#how">Comment ça marche</a>
+    <a href="#features">Avantages</a>
+    <a href="#testimonials">Témoignages</a>
+    <a href="#pricing">Tarifs</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="mobile-menu-cta">
+    <a href="https://calendly.com/walletiz" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Prendre rendez-vous</a>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>Nouveau · Carte de fidélité digitale</span>
+        <h1>La fidélité <em>digitale</em> qui fait revenir vos clients.</h1>
+        <p class="hero-sub">Walletiz équipe les boutiques d'une carte de fidélité 100% digitale et crée des sites web qui convertissent. Plus de cartes papier oubliées, plus de site obsolète.</p>
+        <div class="hero-actions">
+          <a href="https://calendly.com/walletiz" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Prendre rendez-vous <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+          <a href="#how" class="btn btn-outline btn-lg">Voir la démo</a>
+        </div>
+        <div class="hero-trust">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Sans engagement</span>
+          <span></span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Support FR 7j/7</span>
+        </div>
+        <p class="hero-claim">N°1 de la fidélisation digitale de la clientèle dans les DOM-TOM.</p>
+      </div>
+      <div class="hero-mockup">
+        <!-- Dashboard card -->
+        <div class="dash-card">
+          <div class="live-head"><span class="pulse"></span>EN DIRECT</div>
+          <div class="live-grid">
+            <div class="live-stats">
+              <div class="live-stat">
+                <div class="bar-side"></div>
+                <div class="live-stat-body">
+                  <div class="live-stat-val">1 443</div>
+                  <div class="live-stat-lbl">Clients actifs</div>
+                </div>
+                <div class="live-stat-delta">+55</div>
+              </div>
+              <div class="live-stat t2">
+                <div class="bar-side"></div>
+                <div class="live-stat-body">
+                  <div class="live-stat-val">125</div>
+                  <div class="live-stat-lbl">Tampons aujourd'hui</div>
+                </div>
+                <div class="live-stat-delta">+125</div>
+              </div>
+              <div class="live-stat t3">
+                <div class="bar-side"></div>
+                <div class="live-stat-body">
+                  <div class="live-stat-val">2</div>
+                  <div class="live-stat-lbl">Récompenses aujourd'hui</div>
+                </div>
+                <div class="live-stat-delta">+31</div>
+              </div>
+            </div>
+            <div class="live-chart">
+              <div class="live-bars">
+                <i class="lb"></i><i class="lb peak"></i><i class="lb"></i><i class="lb"></i><i class="lb"></i><i class="lb"></i><i class="lb"></i>
+              </div>
+              <div class="live-days">
+                <span>L</span><span class="active">M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Phone -->
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-status">
+              <span>14:32</span>
+              <span>● ● ●</span>
+            </div>
+            <div class="phone-greeting">Bonjour</div>
+            <div class="phone-name">Camille 👋</div>
+            <div class="loyalty-card">
+              <div class="loyalty-card-top">
+                <div>
+                  <div class="loyalty-shop">Boutique</div>
+                  <div class="loyalty-shop-name">Café Lumière</div>
+                </div>
+                <span class="loyalty-tier">GOLD</span>
+              </div>
+              <div class="stamps-grid">
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                <div class="stamp">8</div>
+                <div class="stamp">9</div>
+                <div class="stamp" style="background: rgba(255,255,255,0.18); border-style: solid;">🎁</div>
+              </div>
+              <div class="loyalty-progress">
+                <span>7 / 10 tampons</span>
+                <span>3 avant 1 café offert</span>
+              </div>
+            </div>
+            <div class="phone-footer-card" style="justify-content:center;padding:14px 16px">
+              <svg width="180" height="42" viewBox="0 0 180 42" style="display:block">
+                <rect width="180" height="42" fill="#fff" rx="4"/>
+                <g fill="#0f0f10">
+                  <rect x="8"   y="4" width="2" height="30"/>
+                  <rect x="12"  y="4" width="1" height="30"/>
+                  <rect x="15"  y="4" width="3" height="30"/>
+                  <rect x="20"  y="4" width="1" height="30"/>
+                  <rect x="23"  y="4" width="2" height="30"/>
+                  <rect x="27"  y="4" width="1" height="30"/>
+                  <rect x="30"  y="4" width="3" height="30"/>
+                  <rect x="35"  y="4" width="2" height="30"/>
+                  <rect x="39"  y="4" width="1" height="30"/>
+                  <rect x="42"  y="4" width="2" height="30"/>
+                  <rect x="46"  y="4" width="3" height="30"/>
+                  <rect x="51"  y="4" width="1" height="30"/>
+                  <rect x="54"  y="4" width="2" height="30"/>
+                  <rect x="58"  y="4" width="1" height="30"/>
+                  <rect x="61"  y="4" width="3" height="30"/>
+                  <rect x="66"  y="4" width="1" height="30"/>
+                  <rect x="69"  y="4" width="2" height="30"/>
+                  <rect x="73"  y="4" width="3" height="30"/>
+                  <rect x="78"  y="4" width="1" height="30"/>
+                  <rect x="81"  y="4" width="2" height="30"/>
+                  <rect x="85"  y="4" width="1" height="30"/>
+                  <rect x="88"  y="4" width="3" height="30"/>
+                  <rect x="93"  y="4" width="2" height="30"/>
+                  <rect x="97"  y="4" width="1" height="30"/>
+                  <rect x="100" y="4" width="2" height="30"/>
+                  <rect x="104" y="4" width="3" height="30"/>
+                  <rect x="109" y="4" width="1" height="30"/>
+                  <rect x="112" y="4" width="2" height="30"/>
+                  <rect x="116" y="4" width="1" height="30"/>
+                  <rect x="119" y="4" width="3" height="30"/>
+                  <rect x="124" y="4" width="2" height="30"/>
+                  <rect x="128" y="4" width="1" height="30"/>
+                  <rect x="131" y="4" width="3" height="30"/>
+                  <rect x="136" y="4" width="1" height="30"/>
+                  <rect x="139" y="4" width="2" height="30"/>
+                  <rect x="143" y="4" width="1" height="30"/>
+                  <rect x="146" y="4" width="3" height="30"/>
+                  <rect x="151" y="4" width="2" height="30"/>
+                  <rect x="155" y="4" width="1" height="30"/>
+                  <rect x="158" y="4" width="2" height="30"/>
+                  <rect x="162" y="4" width="3" height="30"/>
+                  <rect x="167" y="4" width="1" height="30"/>
+                  <rect x="170" y="4" width="2" height="30"/>
+                </g>
+                <text x="90" y="40" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#0f0f10" letter-spacing="1.5">WLZ-7842-3019</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</header>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow"><span class="dot"></span>Comment ça marche</span>
+      <h2>Comment fonctionne le programme de fidélité ?</h2>
+      <p>Walletiz s'occupe de tout : la carte digitale, le scan en boutique, et même votre site vitrine si vous en avez besoin.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Création de votre carte </h3>
+        <p>Nous créons votre carte de fidélité digitale et la personnalisons selon l’univers de votre enseigne : couleurs, logo, nombre de tampons et récompenses adaptés à votre image.
+
+
+</p>
+        <div class="step-illu illu-phone">
+          <div class="phone" style="height: 460px">
+            <div class="phone-screen" style="width: 266px; height: 456px">
+              <div class="phone-status">
+                <span>14:32</span>
+                <span>● ● ●</span>
+              </div>
+              <div class="phone-greeting">Bonjour</div>
+              <div class="phone-name">Camille 👋</div>
+              <div class="loyalty-card">
+                <div class="loyalty-card-top">
+                  <div>
+                    <div class="loyalty-shop">Boutique</div>
+                    <div class="loyalty-shop-name">Café Lumière</div>
+                  </div>
+                  <span class="loyalty-tier">GOLD</span>
+                </div>
+                <div class="stamps-grid">
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp filled"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></div>
+                  <div class="stamp">8</div>
+                  <div class="stamp">9</div>
+                  <div class="stamp" style="background: rgba(255,255,255,0.18); border-style: solid;">🎁</div>
+                </div>
+                <div class="loyalty-progress">
+                  <span>7 / 10 tampons</span>
+                  <span>3 avant 1 café offert</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Affichez le QR code</h3>
+        <p>Recevez votre chevalet plexiglas avec le QR code au  thème de votre enseigne: il vous reste plus qu'a le posé sur le comptoir.</p>
+        <div class="step-illu" style="background: transparent; height: 100px; display: grid; place-items: center; overflow: hidden; margin-top: 64px;">
+          <video src="assets/qr-scanner.webm" autoplay loop muted playsinline style="width: 100%; height: 100.4px; object-fit: contain"></video>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Vos clients scannent</h3>
+        <p>Le client scanne avec son téléphone, ajoute la carte à Apple/Google Wallet en une touche. Aucune application à télécharger.</p>
+        <div class="step-illu" style="background: transparent; height: 80px; display: grid; place-items: center; overflow: hidden; margin-top: 64px;">
+          <video src="assets/qr-scan.webm" autoplay loop muted playsinline style="max-width: 80px; max-height: 80px; object-fit: contain"></video>
+        </div>
+      </div>
+      <div class="step step-wide">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Suivez tout en temps réel</h3>
+          <p>Visites, taux de retour, clients actifs, campagnes SMS et notifications push : tout est dans votre tableau de bord.</p>
+        </div>
+        <div class="step-illu step-illu-notifs">
+          <div class="sn-stack">
+            <div class="sn-row"><span class="sn-dot sn-green"></span><span>Julien — Récompense ! 🎁</span></div>
+            <div class="sn-row"><span class="sn-dot sn-bordeaux"></span><span>Anthony — 7/10 tampons 🎯</span></div>
+            <div class="sn-row"><span class="sn-dot sn-blue"></span><span>Emma — Nouvelle cliente ✨</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story 1 : commerçante derrière son comptoir -->
+    <div class="story story-stack">
+      <div>
+        <h3>L'outil pensé pour tout les commerces :</h3>
+        <p>Pilotez votre programme de fidélité facilement depuis votre téléphone, tablette ou ordinateur.
+
+Aucune compétence technique nécessaire — si vous savez utiliser WhatsApp ou envoyer un SMS, vous savez utiliser Walletiz.
+
+
+</p>
+        <ul class="story-list">
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg></span>Tableau de bord simple et lisible</li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/></svg></span>Historique de chaque client en temps réel </li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Relances automatiques des clients inactifs</li>
+        </ul>
+      </div>
+      <div class="story-illu">
+        <img src="assets/shopkeeper-laptop.jpg" alt="Commerçante consultant son tableau de bord Walletiz" />
+      </div>
+    </div>
+
+    <!-- Story 2 : scène d'échange client / boutique -->
+    <div class="story">
+      <div>
+        <span class="eyebrow" style="margin-bottom:14px"><span class="dot"></span>L'expérience client</span>
+        <h3>Transformez chaque visite en client fidèle :</h3>
+        <p>Aucune application à télécharger, aucun compte à créer.
+
+Le client scanne simplement le QR code une seule fois et sa carte de fidélité est automatiquement ajoutée à Apple Wallet ou Google Wallet.</p>
+        <ul class="story-list">
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg></span>Un simple QR code affiché en caisse</li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>Carte de fidélité mise à jour en temps réel</li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Notification envoyée à chaque nouveau tampon ajouté</li>
+        </ul>
+      </div>
+      <div class="story-illu">
+        <img src="assets/shopkeeper-customer.jpg" alt="Commerçante avec un client en boutique" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing" style="background: var(--gray-1);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow"><span class="dot"></span>Tarifs</span>
+      <h2>Des tarifs simples, sans engagement.</h2>
+      <p>Tous les plans incluent la carte digitale, le tableau de bord, et le support FR. Vos données et celles de vos clients sont hébergées en France et protégées conformément au RGPD — vous gardez le contrôle, à tout moment.</p>
+    </div>
+    <div class="pricing-tabs">
+      <button class="pricing-tab active" onclick="setBilling(this, 'month')">Mensuel</button>
+      <button class="pricing-tab" onclick="setBilling(this, 'year')">Annuel -30%</button>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount" data-month="47" data-year="33">47<span>€/mois</span></div>
+        <p class="price-desc">Pour les petites boutiques qui démarrent.</p>
+        <ul class="price-feats">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Carte digitale illimitée</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Jusqu'à 500 clients</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> 100 SMS / mois inclus</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Support email</li>
+        </ul>
+        <a href="https://calendly.com/walletiz" target="_blank" rel="noopener" class="price-cta">Prendre rendez-vous</a>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge">SUR MESURE</span>
+        <div class="price-name">PRO </div>
+        <div class="price-amount" style="font-size:36px">Plan sur mesure</div>
+        <p class="price-desc">Pour les boutiques qui veulent une solution complète et un site web sur mesure.</p>
+        <ul class="price-feats">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Tout du plan Starter</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Clients illimités</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> SMS & push illimités</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Création de site web sur mesure</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Account manager dédié</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Support prioritaire 7j/7</li>
+        </ul>
+        <a href="https://calendly.com/walletiz" target="_blank" rel="noopener" class="price-cta">Prendre rendez-vous</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section id="features" style="background: var(--gray-1);">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow"><span class="dot"></span>Avantages</span>
+      <h2>Tout ce qu'il faut pour fidéliser, sans complexité.</h2>
+      <p>Walletiz ne se contente pas de digitaliser votre carte papier. C'est une vraie boîte à outils marketing pour les enseignes et réseaux de points de vente.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <h3>Augmentation du CA +15 à 25%</h3>
+        <p>Augmentation moyenne du CA constatée chez nos clients en 3 mois, grâce aux relances automatiques et à la fidélisation.</p>
+        <div class="feat-video">
+          <video src="assets/trend-graphic.webm" autoplay loop muted playsinline></video>
+        </div>
+      </div>
+      <div class="feature">
+        <h3>Apple & Google Wallet</h3>
+        <p>Vos clients ajoutent leur carte en 1 touche. Aucune application à installer.</p>
+        <div class="wallet-buttons">
+          <button class="wallet-btn wallet-btn--apple" aria-label="Ajouter à Apple Wallet">
+            <svg class="wallet-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            <span>Apple Wallet</span>
+          </button>
+          <button class="wallet-btn wallet-btn--google" aria-label="Ajouter à Google Wallet">
+            <svg class="wallet-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Google Wallet</span>
+          </button>
+        </div>
+      </div>
+      <div class="feature">
+        <h3> Push illimités</h3>
+        <p>Annoncez vos promos, relancez vos clients dormants en un clic.</p>
+        <div class="feat-gif">
+          <img src="assets/notifications.gif" alt="Notifications push" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow"><span class="dot"></span>Témoignages</span>
+      <h2>Ce que disent les boutiques qui nous font confiance.</h2>
+    </div>
+    <div class="testi-marquee">
+      <div class="testi-track" id="testi-track"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-head" style="text-align:center;margin-left:auto;margin-right:auto">
+      <span class="eyebrow"><span class="dot"></span>Questions fréquentes</span>
+      <h2>Tout ce que vous voulez savoir.</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item open">
+        <div class="faq-q">Faut-il que mes clients téléchargent une application ?<span class="faq-toggle">+</span></div>
+        <div class="faq-a">Non. La carte s'ajoute directement à Apple Wallet ou Google Wallet, déjà installés sur tous les smartphones. Un simple scan du QR code suffit.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Combien de temps pour être opérationnel ?<span class="faq-toggle">+</span></div>
+        <div class="faq-a">Votre solution est entièrement prête sous 5 jours après l'achat du plan: création et configuration de votre carte de fidélité digitale, accompagnées de la livraison de votre chevalet en plexiglas, pour une installation simple et immédiate dans votre établissement.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Puis-je créer un site web avec Walletiz ?<span class="faq-toggle">+</span></div>
+        <div class="faq-a">Oui — Avec Notre équipe nous pouvons créer votre site vitrine sur mesure (1 page ou multi-pages).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Y a-t-il un engagement ?<span class="faq-toggle">+</span></div>
+        <div class="faq-a">Aucun. Vous pouvez résilier à tout moment depuis votre tableau de bord. Vos données restent exportables pendant 60 jours.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Quels moyens de paiement acceptez-vous ?<span class="faq-toggle">+</span></div>
+        <div class="faq-a">Carte bancaire (Visa, Mastercard, Amex) et SEPA. Facturation automatique mensuelle ou annuelle.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Mes données peuvent-elles être exportées ?<span class="faq-toggle">+</span></div>
+        <div class="faq-a">Oui, à tout moment, au format CSV. Vos données vous appartiennent à 100%.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section>
+  <div class="container">
+    <div class="cta-band">
+      <h2>Prêt à fidéliser vos clients ?</h2>
+      <p>
+</p>
+      <div class="cta-actions">
+        <a href="https://calendly.com/walletiz" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Prendre rendez-vous</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-logo"><img src="assets/walletiz-logo.webp" alt="Walletiz" /></div>
+          <div class="brand-name">Walletiz</div>
+        </div>
+        <p>Nous proposons des solutions de fidélité digitale et la création de site web pour les enseignes et réseaux de points de vente.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Produit</h4>
+        <ul>
+          <li><a href="#how">Comment ça marche</a></li>
+          <li><a href="#features">Fonctionnalités</a></li>
+          <li><a href="#pricing">Tarifs</a></li>
+          <li><a href="#security">Sécurité</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Entreprise</h4>
+        <ul>
+          <li><a href="#">À propos</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+          <li><a href="#">Presse</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://calendly.com/walletiz" target="_blank" rel="noopener">Prendre rendez-vous</a></li>
+          <li><a href="mailto:walletiz.eu@gmail.com">walletiz.eu@gmail.com</a></li>
+          <li><a href="tel:+590690907061">0690 90 70 61</a></li>
+          <li><a href="#">CGU / CGV</a></li>
+          <li><a href="#">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Walletiz. Tous droits réservés.</span>
+      <span> 🇫🇷 · Hébergé en France</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+  // ============ TESTIMONIALS MARQUEE ============
+  const testimonials = [
+    { stars: 5, quote: "Les relances SMS automatiques font revenir 1 client sur 4 qu'on avait perdus. Le ROI est immédiat.", name: "Camille Dubois", role: "Salon Étoile · Toulouse", photo: "assets/testi-camille.jpg" },
+    { stars: 5, quote: "Configuration en 10 minutes, kit reçu en 2 jours. On a basculé toute notre clientèle en une semaine.", name: "Thomas Renard", role: "Le Bistrot du Marché · Nantes", photo: "assets/testi-2.jpg" },
+    { stars: 5, quote: "Mes clients voyagent beaucoup, ils retrouvent leur carte directement dans leur Wallet, où qu'ils soient.", name: "Lucas Moreau", role: "Boutique Horizon · Nice", photo: "assets/testi-3.jpg" },
+    { stars: 5, quote: "En 3 mois, mon taux de retour client est passé de 22% à 47%. Le scan se fait en 2 secondes au comptoir.", name: "Rajiv Patel", role: "Spice & Wok · Paris 11", photo: "assets/testi-4.jpg" },
+    { stars: 5, quote: "Mes clients adorent recevoir leurs offres directement sur leur téléphone. L'ambiance du restaurant se prolonge chez eux.", name: "Élise Bernard", role: "La Cabane · Bordeaux", photo: "assets/testi-5.jpg" },
+    { stars: 5, quote: "J'avais 3 cartes de fidélité différentes, là tout est centralisé. Mes clients ne perdent plus leurs tampons.", name: "Pierre Lacroix", role: "Caviste Lacroix · Reims", photo: "assets/testi-pierre.jpg" },
+    { stars: 5, quote: "Le support répond en moins de 30 minutes par chat. Pour une petite boutique comme la mienne, c'est précieux.", name: "Aïcha Diallo", role: "Atelier Couleurs · Lille", photo: "assets/testi-7.jpg" },
+    { stars: 5, quote: "Mon comptable est ravi, je vois exactement quel client génère quoi. Le tableau de bord est ultra clair.", name: "Yannis Petros", role: "Brasserie Nord · Strasbourg", photo: "assets/testi-8.jpg" },
+  ];
+  function avatarMarkup(t) {
+    if (t.photo) return `<img src="${t.photo}" alt="${t.name}" />`;
+    const initials = t.name.split(' ').map(s => s[0]).slice(0,2).join('');
+    return `<svg viewBox="0 0 44 44"><rect width="44" height="44" fill="${t.color}"/><text x="22" y="28" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-weight="700" font-size="16">${initials}</text></svg>`;
+  }
+  function testiCard(t) {
+    return `<div class="testi">
+      <div class="testi-stars">${'★'.repeat(t.stars)}</div>
+      <p class="testi-quote">"${t.quote}"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">${avatarMarkup(t)}</div>
+        <div>
+          <div class="testi-name">${t.name}</div>
+          <div class="testi-role">${t.role}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+  const track = document.getElementById('testi-track');
+  if (track) track.innerHTML = [...testimonials, ...testimonials].map(testiCard).join('');
+
+  // ============ FAQ ============
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => item.classList.toggle('open'));
+  });
+
+  // ============ PRICING TABS ============
+  function setBilling(btn, type) {
+    document.querySelectorAll('.pricing-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.price-amount[data-month]').forEach(el => {
+      const v = type === 'year' ? el.dataset.year : el.dataset.month;
+      const suffix = type === 'year' ? '€/mois' : '€/mois';
+      el.innerHTML = `${v}<span>${suffix}</span>`;
+    });
+  }
+
+  // ============ MOBILE MENU ============
+  (function() {
+    const burger = document.getElementById('navBurger');
+    const menu = document.getElementById('mobileMenu');
+    const backdrop = document.getElementById('mobileMenuBackdrop');
+    const closeBtn = document.getElementById('navClose');
+    if (!burger || !menu) return;
+
+    const focusableSel = 'a[href], button:not([disabled])';
+    let lastFocused = null;
+
+    function openMenu() {
+      lastFocused = document.activeElement;
+      menu.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.classList.add('menu-open');
+      burger.setAttribute('aria-expanded', 'true');
+      menu.setAttribute('aria-hidden', 'false');
+      backdrop.setAttribute('aria-hidden', 'false');
+      // focus first interactive after transition
+      setTimeout(() => { closeBtn && closeBtn.focus(); }, 50);
+    }
+
+    function closeMenu() {
+      menu.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      burger.setAttribute('aria-expanded', 'false');
+      menu.setAttribute('aria-hidden', 'true');
+      backdrop.setAttribute('aria-hidden', 'true');
+      if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    }
+
+    burger.addEventListener('click', () => {
+      if (menu.classList.contains('open')) closeMenu(); else openMenu();
+    });
+    closeBtn && closeBtn.addEventListener('click', closeMenu);
+    backdrop.addEventListener('click', closeMenu);
+
+    // close on link click
+    menu.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => { closeMenu(); });
+    });
+
+    // Esc to close, focus trap
+    document.addEventListener('keydown', (e) => {
+      if (!menu.classList.contains('open')) return;
+      if (e.key === 'Escape') { e.preventDefault(); closeMenu(); return; }
+      if (e.key === 'Tab') {
+        const items = menu.querySelectorAll(focusableSel);
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    });
+
+    // close on resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768 && menu.classList.contains('open')) closeMenu();
+    });
+  })();
+
+  // ============ TWEAKS ============
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "primaryColor": "#7a1232",
+    "theme": "light"
+  }/*EDITMODE-END*/;
+
+  let tweaks = { ...TWEAK_DEFAULTS };
+
+  function applyTweaks() {
+    document.documentElement.style.setProperty('--burgundy', tweaks.primaryColor);
+    // derive dark variant
+    const darker = shadeColor(tweaks.primaryColor, -15);
+    const lighter = shadeColor(tweaks.primaryColor, 15);
+    document.documentElement.style.setProperty('--burgundy-dark', darker);
+    document.documentElement.style.setProperty('--burgundy-light', lighter);
+    document.body.classList.toggle('dark', tweaks.theme === 'dark');
+  }
+  function shadeColor(hex, percent) {
+    const num = parseInt(hex.replace('#',''), 16);
+    let r = (num >> 16) + Math.round(2.55 * percent);
+    let g = ((num >> 8) & 0x00FF) + Math.round(2.55 * percent);
+    let b = (num & 0x0000FF) + Math.round(2.55 * percent);
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+  }
+
+  function buildTweakPanel() {
+    if (document.getElementById('tweak-panel')) return;
+    const panel = document.createElement('div');
+    panel.id = 'tweak-panel';
+    panel.style.cssText = `
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      width: 280px; background: #fff; border: 1px solid #e8e3dc;
+      border-radius: 14px; padding: 18px; box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+      font-family: 'Inter', sans-serif;
+    `;
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-family:'Inter Tight';font-weight:700;font-size:14px">Tweaks</div>
+        <button id="tweak-close" style="background:none;border:none;cursor:pointer;font-size:18px;color:#6b6660;padding:0;width:24px;height:24px">×</button>
+      </div>
+      <div style="font-size:11px;color:#6b6660;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:8px">Couleur principale</div>
+      <div id="tweak-colors" style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        ${['#7a1232','#0f0f10','#1a4a8a','#1f7a4d','#c45a1f'].map(c =>
+          `<button data-color="${c}" style="width:32px;height:32px;border-radius:8px;background:${c};border:2px solid ${c === tweaks.primaryColor ? '#0f0f10' : 'transparent'};cursor:pointer"></button>`
+        ).join('')}
+      </div>
+      <div style="font-size:11px;color:#6b6660;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:8px">Thème</div>
+      <div style="display:flex;gap:8px">
+        <button data-theme="light" style="flex:1;padding:8px;border-radius:8px;border:1px solid ${tweaks.theme==='light'?'#0f0f10':'#e8e3dc'};background:${tweaks.theme==='light'?'#0f0f10':'#fff'};color:${tweaks.theme==='light'?'#fff':'#0f0f10'};cursor:pointer;font-size:12px;font-weight:600">Clair</button>
+        <button data-theme="dark" style="flex:1;padding:8px;border-radius:8px;border:1px solid ${tweaks.theme==='dark'?'#0f0f10':'#e8e3dc'};background:${tweaks.theme==='dark'?'#0f0f10':'#fff'};color:${tweaks.theme==='dark'?'#fff':'#0f0f10'};cursor:pointer;font-size:12px;font-weight:600">Sombre</button>
+      </div>
+    `;
+    document.body.appendChild(panel);
+
+    panel.querySelector('#tweak-close').onclick = () => {
+      panel.remove();
+      window.parent.postMessage({type: '__edit_mode_dismissed'}, '*');
+    };
+    panel.querySelectorAll('[data-color]').forEach(b => {
+      b.onclick = () => {
+        tweaks.primaryColor = b.dataset.color;
+        applyTweaks();
+        panel.remove(); buildTweakPanel();
+        window.parent.postMessage({type:'__edit_mode_set_keys',edits:{primaryColor:tweaks.primaryColor}},'*');
+      };
+    });
+    panel.querySelectorAll('[data-theme]').forEach(b => {
+      b.onclick = () => {
+        tweaks.theme = b.dataset.theme;
+        applyTweaks();
+        panel.remove(); buildTweakPanel();
+        window.parent.postMessage({type:'__edit_mode_set_keys',edits:{theme:tweaks.theme}},'*');
+      };
+    });
+  }
+
+  window.addEventListener('message', (e) => {
+    if (e.data?.type === '__activate_edit_mode') buildTweakPanel();
+    if (e.data?.type === '__deactivate_edit_mode') document.getElementById('tweak-panel')?.remove();
+  });
+  window.parent.postMessage({type:'__edit_mode_available'}, '*');
+  applyTweaks();
+</script>
+
+</body>
+</html>
