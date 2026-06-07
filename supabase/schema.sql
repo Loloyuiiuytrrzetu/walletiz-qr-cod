@@ -46,6 +46,15 @@ create table if not exists cards (
 );
 create index if not exists cards_business_idx on cards(business_id);
 
+-- Migration safe-add pour la table cards (si elle existait déjà avec l'ancien schéma)
+alter table cards add column if not exists mechanic text not null default 'stamp';
+alter table cards add column if not exists stamps_required int default 10;
+alter table cards add column if not exists reward_label text default 'Un produit offert';
+alter table cards add column if not exists points_per_euro int default 1;
+alter table cards add column if not exists points_for_reward int default 100;
+alter table cards add column if not exists primary_color text default '#7B1E2B';
+alter table cards add column if not exists is_active boolean default true;
+
 create table if not exists customers (
   id uuid primary key default gen_random_uuid(),
   business_id uuid not null references businesses(id) on delete cascade,
