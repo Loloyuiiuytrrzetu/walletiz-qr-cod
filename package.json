@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node -e \"require('fs').writeFileSync('.next/export-detail.json', JSON.stringify({version:1,outDirectory:'.next',success:true}))\"",
+    "build": "next build && node scripts/fix-export-detail.mjs",
     "start": "next start",
     "lint": "next lint",
     "worker": "node scripts/notification-worker.mjs"
