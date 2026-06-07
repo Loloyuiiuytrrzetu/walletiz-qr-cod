@@ -100,21 +100,26 @@ alter table customers enable row level security;
 alter table customer_cards enable row level security;
 alter table activity enable row level security;
 
+drop policy if exists "owner_businesses" on businesses;
 create policy "owner_businesses" on businesses for all
   using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 
+drop policy if exists "owner_cards" on cards;
 create policy "owner_cards" on cards for all
   using (business_id in (select id from businesses where owner_id = auth.uid()))
   with check (business_id in (select id from businesses where owner_id = auth.uid()));
 
+drop policy if exists "owner_customers" on customers;
 create policy "owner_customers" on customers for all
   using (business_id in (select id from businesses where owner_id = auth.uid()))
   with check (business_id in (select id from businesses where owner_id = auth.uid()));
 
+drop policy if exists "owner_customer_cards" on customer_cards;
 create policy "owner_customer_cards" on customer_cards for all
   using (card_id in (select c.id from cards c join businesses b on b.id = c.business_id where b.owner_id = auth.uid()))
   with check (card_id in (select c.id from cards c join businesses b on b.id = c.business_id where b.owner_id = auth.uid()));
 
+drop policy if exists "owner_activity" on activity;
 create policy "owner_activity" on activity for all
   using (business_id in (select id from businesses where owner_id = auth.uid()))
   with check (business_id in (select id from businesses where owner_id = auth.uid()));
