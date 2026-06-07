@@ -7,8 +7,28 @@ create table if not exists businesses (
   name text not null,
   slug text unique not null,
   logo_url text,
+  is_active boolean not null default true,
+  plan text not null default 'gratuit', -- gratuit | solo | pro
+  suspended_at timestamptz,
+  suspended_reason text,
   created_at timestamptz default now()
 );
+
+-- Migration safe-add (si la table existait déjà sans ces colonnes)
+alter table businesses add column if not exists is_active boolean not null default true;
+alter table businesses add column if not exists plan text not null default 'gratuit';
+alter table businesses add column if not exists suspended_at timestamptz;
+alter table businesses add column if not exists suspended_reason text;
+
+create table if not exists admin_logs (
+  id uuid primary key default gen_random_uuid(),
+  admin_email text not null,
+  action text not null,
+  target_business_id uuid references businesses(id) on delete set null,
+  meta jsonb,
+  created_at timestamptz default now()
+);
+create index if not exists admin_logs_created_idx on admin_logs(created_at desc);
 create index if not exists businesses_owner_idx on businesses(owner_id);
 
 create table if not exists cards (

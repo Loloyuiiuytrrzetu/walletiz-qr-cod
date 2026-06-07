@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 import LogoutButton from "./LogoutButton";
 
 const NAV = [
@@ -17,11 +18,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("id, name")
+    .select("id, name, is_active")
     .eq("owner_id", user.id)
     .maybeSingle();
 
   if (!business) redirect("/onboarding");
+  if (!business.is_active) redirect("/suspended");
+  const userIsAdmin = isAdminEmail(user.email);
 
   return (
     <div className="min-h-screen flex">
@@ -41,6 +44,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </Link>
           ))}
         </nav>
+        {userIsAdmin && (
+          <Link
+            href="/admin"
+            className="mt-3 px-3 py-2 text-xs rounded-lg bg-brand text-white text-center font-medium"
+          >
+            🛡️ Console admin
+          </Link>
+        )}
         <LogoutButton />
       </aside>
       <main className="flex-1 px-8 py-8 max-w-5xl">{children}</main>
