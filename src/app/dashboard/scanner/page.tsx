@@ -1,102 +1,161 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Topbar from "@/components/Topbar";
 import { BrowserMultiFormatReader } from "@zxing/browser";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ScannerPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const readerRef = useRef<BrowserMultiFormatReader | null>(null);
-  const [result, setResult] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [manual, setManual] = useState("");
-  const lastRef = useRef<{ code: string; at: number }>({ code: "", at: 0 });
+  const [scanning, setScanning] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [amount, setAmount] = useState(1);
+  const [manualQr, setManualQr] = useState("");
 
   useEffect(() => {
+    if (!scanning) return;
     const reader = new BrowserMultiFormatReader();
-    readerRef.current = reader;
-    let active = true;
-
+    let stopped = false;
+    let controls: any;
     (async () => {
       try {
-        const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-        if (!devices.length) { setError("Aucune caméra détectée"); return; }
-        const back = devices.find((d) => /back|rear|environnement/i.test(d.label)) ?? devices[devices.length - 1];
-        await reader.decodeFromVideoDevice(back.deviceId, videoRef.current!, (res) => {
-          if (!active || !res) return;
-          const code = res.getText();
-          const now = Date.now();
-          if (code === lastRef.current.code && now - lastRef.current.at < 3000) return;
-          lastRef.current = { code, at: now };
-          submit(code);
+        controls = await reader.decodeFromVideoDevice(undefined, videoRef.current!, (res) => {
+          if (res && !stopped) {
+            stopped = true;
+            const text = res.getText();
+            handleQr(extractQr(text));
+            controls?.stop?.();
+            setScanning(false);
+          }
         });
       } catch (e: any) {
-        setError(e?.message || "Impossible d'accéder à la caméra");
+        setErr(e.message);
+        setScanning(false);
       }
     })();
-
     return () => {
-      active = false;
-      // @ts-ignore - reset exists at runtime
-      readerRef.current?.reset?.();
+      stopped = true;
+      controls?.stop?.();
     };
-  }, []);
+  }, [scanning]);
 
-  async function submit(qr: string) {
-    if (busy) return;
-    setBusy(true);
-    setError(null);
+  function extractQr(text: string): string {
     try {
-      const res = await fetch("/api/scan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ qr }) });
-      const j = await res.json();
-      if (j.ok) {
-        const tag = j.kind === "reward" ? "🎉 RÉCOMPENSE !" : "+1 tampon";
-        setResult(`${tag} · ${j.customer_name} · ${j.stamps}/${j.required}`);
-        if ("vibrate" in navigator) navigator.vibrate(100);
-      } else {
-        setError(j.error || "Erreur");
-      }
-    } catch (e: any) {
-      setError(e?.message || "Erreur réseau");
-    } finally {
-      setBusy(false);
+      const u = new URL(text);
+      const parts = u.pathname.split("/").filter(Boolean);
+      return parts[parts.length - 1] || text;
+    } catch {
+      return text;
     }
   }
 
-  return (
-    <>
-      <Topbar crumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Scanner" }]} />
-      <main className="p-8 max-w-2xl">
-        <h1 className="font-display text-5xl font-semibold tracking-tight">Scanner</h1>
-        <p className="mt-2 text-neutral-500">Pointez la caméra vers le QR du client (Apple/Google Wallet).</p>
+  async function handleQr(qr: string) {
+    setErr(null);
+    setResult(null);
+    const res = await fetch("/api/scan", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ qr, amount }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setErr(data.error || "Erreur");
+      return;
+    }
+    setResult(data);
+  }
 
-        <div className="mt-6 card overflow-hidden">
-          <div className="relative bg-black aspect-square">
-            <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" muted playsInline />
-            <div className="absolute inset-0 grid place-items-center pointer-events-none">
-              <div className="w-2/3 aspect-square border-4 border-white/80 rounded-2xl" />
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Scanner</h1>
+      <p className="mt-1 text-neutral-600">Scannez le QR code du client pour ajouter un tampon ou des points.</p>
+
+      <div className="mt-8 grid md:grid-cols-2 gap-8">
+        <div>
+          <div className="bg-black rounded-2xl overflow-hidden aspect-square relative">
+            <video ref={videoRef} className="w-full h-full object-cover" />
+            {!scanning && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <button
+                  onClick={() => setScanning(true)}
+                  className="bg-brand text-white px-5 py-3 rounded-full"
+                >
+                  Démarrer la caméra
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4">
+            <label className="text-sm font-medium">Quantité (tampons ou euros)</label>
+            <input
+              type="number"
+              min={1}
+              value={amount}
+              onChange={(e) => setAmount(+e.target.value)}
+              className="mt-1 w-full px-4 py-2 rounded-xl border border-neutral-300"
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="text-sm font-medium">Ou saisir le code QR à la main</label>
+            <div className="mt-1 flex gap-2">
+              <input
+                value={manualQr}
+                onChange={(e) => setManualQr(e.target.value)}
+                placeholder="code QR"
+                className="flex-1 px-4 py-2 rounded-xl border border-neutral-300"
+              />
+              <button
+                onClick={() => handleQr(manualQr)}
+                className="bg-neutral-900 text-white px-4 py-2 rounded-xl text-sm"
+              >
+                Valider
+              </button>
             </div>
           </div>
         </div>
 
-        {result && (
-          <div className="mt-4 card p-4 border-emerald-200 bg-emerald-50">
-            <p className="text-sm font-medium text-emerald-800">{result}</p>
-          </div>
-        )}
-        {error && (
-          <div className="mt-4 card p-4 border-red-200 bg-red-50">
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
-        )}
+        <div>
+          {err && (
+            <div className="bg-red-50 text-red-700 rounded-2xl p-5">
+              <div className="font-semibold">Erreur</div>
+              <div className="text-sm mt-1">{err}</div>
+            </div>
+          )}
+          {result && (
+            <div className="bg-white rounded-2xl border border-neutral-200 p-6">
+              <div className="text-sm text-neutral-500">Scan validé ✓</div>
+              <div className="mt-1 text-xl font-semibold">
+                {result.customer?.first_name} {result.customer?.last_name}
+              </div>
+              <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+                <Stat label="Tampons" value={result.progress?.stamps ?? 0} />
+                <Stat label="Points" value={result.progress?.points ?? 0} />
+                <Stat label="Récompenses" value={result.progress?.rewards_claimed ?? 0} />
+              </div>
+              {result.reward_unlocked && (
+                <div className="mt-4 bg-brand text-white rounded-xl px-4 py-3 text-center font-medium">
+                  🎁 Récompense débloquée !
+                </div>
+              )}
+            </div>
+          )}
+          {!result && !err && (
+            <div className="text-sm text-neutral-500">
+              Lancez la caméra et scannez un QR client.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        <form onSubmit={(e) => { e.preventDefault(); submit(manual); setManual(""); }}
-          className="mt-6 card p-4 flex gap-2">
-          <input value={manual} onChange={(e) => setManual(e.target.value)} placeholder="Saisie manuelle du code"
-            className="flex-1 px-3 py-2 rounded-lg border border-neutral-200 outline-none focus:border-bordeaux-700" />
-          <button disabled={busy || !manual} className="btn-bordeaux">Valider</button>
-        </form>
-      </main>
-    </>
+function Stat({ label, value }: { label: string; value: any }) {
+  return (
+    <div>
+      <div className="text-2xl font-semibold">{value}</div>
+      <div className="text-xs text-neutral-500">{label}</div>
+    </div>
   );
 }

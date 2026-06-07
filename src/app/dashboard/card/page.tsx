@@ -1,24 +1,26 @@
 import { createClient } from "@/lib/supabase/server";
-import Topbar from "@/components/Topbar";
 import CardEditor from "./CardEditor";
 
 export default async function CardPage() {
-  const sb = createClient();
-  const { data: { user } } = await sb.auth.getUser();
-  const { data: business } = await sb.from("businesses").select("*").eq("owner_id", user!.id).single();
-  let { data: card } = await sb.from("cards").select("*").eq("business_id", business.id).maybeSingle();
-
-  if (!card) {
-    const { data: created } = await sb.from("cards").insert({ business_id: business.id }).select().single();
-    card = created;
-  }
-
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data: business } = await supabase
+    .from("businesses")
+    .select("id")
+    .eq("owner_id", user.id)
+    .single();
+  if (!business) return null;
+  const { data: card } = await supabase
+    .from("cards")
+    .select("*")
+    .eq("business_id", business.id)
+    .single();
   return (
-    <>
-      <Topbar crumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Ma carte" }]} />
-      <main className="p-8 max-w-7xl">
-        <CardEditor card={card} businessName={business.name} />
-      </main>
-    </>
+    <div>
+      <h1 className="text-3xl font-bold">Ma carte</h1>
+      <p className="mt-1 text-neutral-600">Personnalisez le programme que verront vos clients.</p>
+      <CardEditor card={card} />
+    </div>
   );
 }

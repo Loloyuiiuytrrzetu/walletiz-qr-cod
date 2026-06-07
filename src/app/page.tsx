@@ -2,55 +2,76 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white">
-      <nav className="border-b border-neutral-100">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-bordeaux-700 grid place-items-center text-white font-bold">W</div>
-            <span className="font-display text-xl font-semibold">Walletiz</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-neutral-600 hover:text-neutral-900">Connexion</Link>
-            <Link href="/signup" className="btn-bordeaux text-sm">Créer mon compte</Link>
-          </div>
+    <main className="min-h-screen">
+      <header className="px-6 py-5 flex items-center justify-between max-w-6xl mx-auto">
+        <div className="font-semibold text-xl">
+          <span className="text-brand">●</span> Fidelity
         </div>
-      </nav>
+        <nav className="flex items-center gap-4 text-sm">
+          <Link href="/login" className="text-neutral-700 hover:text-black">Connexion</Link>
+          <Link href="/signup" className="bg-brand text-white px-4 py-2 rounded-full hover:bg-brand-dark">
+            Démarrer
+          </Link>
+        </nav>
+      </header>
 
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="max-w-3xl">
-          <p className="text-bordeaux-700 font-medium mb-4">Cartes de fidélité digitales</p>
-          <h1 className="font-display text-5xl md:text-6xl font-semibold leading-tight tracking-tight">
-            Fidélisez vos clients. Sans plastique, sans appli à télécharger.
+      <section className="max-w-6xl mx-auto px-6 pt-16 pb-24 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 className="text-5xl font-bold leading-tight tracking-tight">
+            La carte de fidélité <span className="text-brand">digitale</span>
+            <br />qui fait revenir vos clients.
           </h1>
           <p className="mt-6 text-lg text-neutral-600">
-            Walletiz remplace votre carte papier par une carte digitale dans Apple Wallet & Google Wallet.
-            Programmez des notifications push, créez des offres, suivez vos clients.
+            Créez votre programme de fidélité en 2 minutes. Tampons ou points,
+            QR code pour vos clients, scanner en caisse. Sans application à installer.
           </p>
           <div className="mt-8 flex gap-3">
-            <Link href="/signup" className="btn-bordeaux">Démarrer gratuitement</Link>
-            <Link href="/demo" className="px-4 py-2.5 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-sm font-medium">Voir une démo</Link>
+            <Link href="/signup" className="bg-brand text-white px-6 py-3 rounded-full font-medium hover:bg-brand-dark">
+              Créer mon programme gratuit
+            </Link>
+            <Link href="#features" className="px-6 py-3 rounded-full border border-neutral-300 hover:border-neutral-500">
+              Voir les fonctionnalités
+            </Link>
           </div>
         </div>
 
-        <div className="mt-20 grid md:grid-cols-3 gap-6">
+        <div className="relative">
+          <div className="bg-brand text-white rounded-3xl p-8 shadow-2xl rotate-2">
+            <div className="text-sm opacity-80">Café Lune</div>
+            <div className="mt-2 text-2xl font-semibold">Marie Dupont</div>
+            <div className="mt-8 grid grid-cols-5 gap-3">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`aspect-square rounded-full border-2 ${
+                    i < 7 ? "bg-white border-white" : "border-white/40"
+                  }`}
+                />
+              ))}
+            </div>
+            <div className="mt-6 text-sm opacity-90">7 / 10 — Plus que 3 pour un café offert !</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" className="bg-white py-20">
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8">
           {[
-            { t: "Carte tampon ou points", d: "Choisissez votre mécanique. Personnalisez les couleurs, l'expiration, le style." },
-            { t: "Notifications push programmables", d: "Campagnes ciblées, automatisations (inactivité, anniversaire, récompense prête)." },
-            { t: "Dashboard temps réel", d: "Statistiques, historique d'activité, gestion des clients et des offres." },
+            { t: "Tampons ou points", d: "Choisissez la mécanique qui colle à votre commerce." },
+            { t: "QR code unique", d: "Chaque client a son QR. Scannez en caisse, c'est instantané." },
+            { t: "Aucune app à installer", d: "Vos clients accèdent à leur carte via un simple lien." },
           ].map((f) => (
-            <div key={f.t} className="card p-6">
-              <h3 className="font-display text-xl font-semibold">{f.t}</h3>
-              <p className="mt-2 text-neutral-600 text-sm">{f.d}</p>
+            <div key={f.t} className="p-6 rounded-2xl border border-neutral-200">
+              <div className="text-brand text-2xl">◆</div>
+              <div className="mt-3 font-semibold text-lg">{f.t}</div>
+              <div className="mt-1 text-neutral-600">{f.d}</div>
             </div>
           ))}
         </div>
       </section>
 
-      <footer className="border-t border-neutral-100 mt-10">
-        <div className="max-w-6xl mx-auto px-6 py-8 text-sm text-neutral-500 flex justify-between">
-          <span>© {new Date().getFullYear()} Walletiz</span>
-          <span>Fait avec ♥</span>
-        </div>
+      <footer className="py-10 text-center text-sm text-neutral-500">
+        © {new Date().getFullYear()} Fidelity — Fait avec soin.
       </footer>
     </main>
   );

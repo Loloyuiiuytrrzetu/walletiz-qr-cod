@@ -1,70 +1,80 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import Topbar from "@/components/Topbar";
 
 export default async function DashboardHome() {
-  const sb = createClient();
-  const { data: { user } } = await sb.auth.getUser();
-  const { data: business } = await sb.from("businesses").select("*").eq("owner_id", user!.id).single();
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
 
-  const today = new Date(); today.setHours(0, 0, 0, 0);
-  const isoToday = today.toISOString();
-  const weekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+  const { data: business } = await supabase
+    .from("businesses")
+    .select("id, name")
+    .eq("owner_id", user.id)
+    .single();
+  if (!business) return null;
 
-  const [{ count: activeClients }, { count: stampsToday }, { count: scansToday }, { count: rewardsWeek }] = await Promise.all([
-    sb.from("customers").select("id", { count: "exact", head: true }).eq("business_id", business.id),
-    sb.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "stamp").gte("created_at", isoToday),
-    sb.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "scan").gte("created_at", isoToday),
-    sb.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "reward").gte("created_at", weekAgo),
+  const [{ count: customerCount }, { count: activityCount }, { data: card }] = await Promise.all([
+    supabase.from("customers").select("id", { count: "exact", head: true }).eq("business_id", business.id),
+    supabase.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id),
+    supabase.from("cards").select("*").eq("business_id", business.id).maybeSingle(),
   ]);
 
-  const today_day = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
-
-  const stats = [
-    { label: "Clients actifs", value: activeClients ?? 0, hint: "+0 ce mois" },
-    { label: "Tampons aujourd'hui", value: stampsToday ?? 0, hint: "=0 vs hier" },
-    { label: "Scans aujourd'hui", value: scansToday ?? 0, hint: "En temps réel" },
-    { label: "Récompenses · sem.", value: rewardsWeek ?? 0, hint: "+0 vs sem. dernière" },
-  ];
-
-  const actions = [
-    { icon: "⊞", title: "Scannez la carte de fidélité d'un client", cta: "Ouvrir le scanner", href: "/dashboard/scanner" },
-    { icon: "💳", title: "Personnalisez votre carte de fidélité", cta: "Configurer la carte", href: "/dashboard/card" },
-    { icon: "🏷️", title: "Créez et gérez vos offres exclusives", cta: "Voir mes offres", href: "/dashboard/offers" },
-    { icon: "👥", title: "Invitez et fidélisez de nouveaux clients", cta: "Inviter un client", href: "/dashboard/clients?invite=1" },
-  ];
+  const { data: recent } = await supabase
+    .from("activity")
+    .select("kind, amount, created_at, customers(first_name, last_name)")
+    .eq("business_id", business.id)
+    .order("created_at", { ascending: false })
+    .limit(8);
 
   return (
-    <>
-      <Topbar crumbs={[{ label: "Dashboard", href: "/dashboard" }, { label: "Accueil" }]} />
-      <main className="p-8 max-w-7xl">
-        <h1 className="font-display text-5xl font-semibold tracking-tight">Accueil</h1>
-        <p className="mt-2 text-neutral-500 capitalize">{today_day}</p>
-        <p className="mt-1 text-neutral-700">
-          Bonjour <strong>{business.name}</strong> — voici ce qui se passe chez <strong>{business.name}</strong> aujourd'hui.
-        </p>
+    <div>
+      <h1 className="text-3xl font-bold">Bonjour 👋</h1>
+      <p className="mt-1 text-neutral-600">Voici un aperçu de votre programme.</p>
 
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((s) => (
-            <div key={s.label} className="stat-card">
-              <div className="text-xs text-neutral-500">{s.label}</div>
-              <div className="mt-2 font-display text-5xl font-semibold">{s.value}</div>
-              <div className="mt-2 text-xs text-neutral-400">{s.hint}</div>
+      <div className="mt-8 grid grid-cols-3 gap-4">
+        <Stat label="Clients" value={customerCount ?? 0} />
+        <Stat label="Visites" value={activityCount ?? 0} />
+        <Stat
+          label="Mécanique"
+          value={card?.mechanic === "points" ? "Points" : "Tampons"}
+        />
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-lg font-semibold">Activité récente</h2>
+        <div className="mt-4 bg-white rounded-2xl border border-neutral-200 divide-y">
+          {(!recent || recent.length === 0) && (
+            <div className="px-4 py-6 text-sm text-neutral-500">
+              Aucune activité pour le moment. Allez dans <b>Scanner</b> pour ajouter un tampon.
+            </div>
+          )}
+          {recent?.map((r: any, i) => (
+            <div key={i} className="px-4 py-3 flex items-center justify-between text-sm">
+              <div>
+                <span className="font-medium">
+                  {r.customers?.first_name ?? "Client"} {r.customers?.last_name ?? ""}
+                </span>
+                <span className="ml-2 text-neutral-500">
+                  {r.kind === "stamp" && `+${r.amount} tampon`}
+                  {r.kind === "points" && `+${r.amount} pts`}
+                  {r.kind === "reward" && "récompense"}
+                </span>
+              </div>
+              <div className="text-neutral-500">
+                {new Date(r.created_at).toLocaleString("fr-FR")}
+              </div>
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <h2 className="font-display text-2xl font-semibold mt-12">Boostez votre fidélité</h2>
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {actions.map((a) => (
-            <div key={a.title} className="card p-5 flex flex-col">
-              <div className="h-32 rounded-xl bg-neutral-50 border border-neutral-100 grid place-items-center text-3xl">{a.icon}</div>
-              <p className="mt-4 text-sm text-neutral-700 flex-1">{a.title}</p>
-              <Link href={a.href} className="mt-4 w-full text-center bg-neutral-900 text-white rounded-xl py-2 text-sm hover:bg-neutral-800">{a.cta}</Link>
-            </div>
-          ))}
-        </div>
-      </main>
-    </>
+function Stat({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="bg-white rounded-2xl border border-neutral-200 px-5 py-4">
+      <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
+      <div className="mt-1 text-2xl font-semibold">{value}</div>
+    </div>
   );
 }

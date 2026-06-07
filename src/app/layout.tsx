@@ -2,14 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Walletiz — Cartes de fidélité digitales",
-  description: "Créez et gérez vos cartes de fidélité digitales avec notifications push.",
-};
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  themeColor: "#7B1E2B",
+  title: "Fidelity — Cartes de fidélité digitales",
+  description: "Le SaaS de fidélisation pour les commerçants modernes.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
