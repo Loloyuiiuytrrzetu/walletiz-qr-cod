@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +9,7 @@ const PLANS = [
 ];
 
 export default async function BillingPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase.from("businesses").select("plan").eq("owner_id", user.id).single();
+  const { business } = await getCurrentBusiness();
 
   return (
     <div>

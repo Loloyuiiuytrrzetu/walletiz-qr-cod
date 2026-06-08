@@ -1,19 +1,12 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 import NewClientButton from "./NewClientButton";
 
-export default async function ClientsPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase
-    .from("businesses")
-    .select("id")
-    .eq("owner_id", user.id)
-    .single();
-  if (!business) return null;
+export const dynamic = "force-dynamic";
 
-  const { data: customers } = await supabase
+export default async function ClientsPage() {
+  const { business, admin } = await getCurrentBusiness();
+  const { data: customers } = await admin
     .from("customers")
     .select("id, first_name, last_name, email, phone, qr_code, created_at")
     .eq("business_id", business.id)
@@ -35,7 +28,7 @@ export default async function ClientsPage() {
             Aucun client pour le moment. Ajoutez votre premier client →
           </div>
         )}
-        {customers?.map((c) => (
+        {customers?.map((c: any) => (
           <Link
             key={c.id}
             href={`/dashboard/clients/${c.id}`}

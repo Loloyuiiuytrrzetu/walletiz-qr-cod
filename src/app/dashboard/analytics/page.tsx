@@ -1,16 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export default async function AnalyticsPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase.from("businesses").select("id").eq("owner_id", user.id).single();
-  if (!business) return null;
+  const { business, admin } = await getCurrentBusiness();
 
   const since = new Date(Date.now() - 30 * 86400000).toISOString();
-  const { data: acts } = await supabase
+  const { data: acts } = await admin
     .from("activity")
     .select("kind, created_at, amount")
     .eq("business_id", business.id)

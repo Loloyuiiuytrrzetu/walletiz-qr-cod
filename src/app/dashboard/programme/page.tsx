@@ -1,24 +1,20 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProgrammePage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase.from("businesses").select("id, plan").eq("owner_id", user.id).single();
-  if (!business) return null;
-  const { data: card } = await supabase.from("cards").select("*").eq("business_id", business.id).single();
+  const { business, admin } = await getCurrentBusiness();
+  const { data: card } = await admin.from("cards").select("*").eq("business_id", business.id).maybeSingle();
 
   const today = new Date();
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1).toISOString();
   const weekAgo = new Date(today.getTime() - 7 * 86400000).toISOString();
 
   const [{ count: stampsThisMonth }, { count: clientsCount }, { count: rewardsThisWeek }] = await Promise.all([
-    supabase.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "stamp").gte("created_at", monthStart),
-    supabase.from("customers").select("id", { count: "exact", head: true }).eq("business_id", business.id),
-    supabase.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "reward").gte("created_at", weekAgo),
+    admin.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "stamp").gte("created_at", monthStart),
+    admin.from("customers").select("id", { count: "exact", head: true }).eq("business_id", business.id),
+    admin.from("activity").select("id", { count: "exact", head: true }).eq("business_id", business.id).eq("kind", "reward").gte("created_at", weekAgo),
   ]);
 
   return (

@@ -1,16 +1,17 @@
 import Link from "next/link";
 import QRCode from "qrcode";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
+
+export const dynamic = "force-dynamic";
 
 export default async function ClientDetail({ params }: { params: { id: string } }) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+  const { business, admin } = await getCurrentBusiness();
 
-  const { data: customer } = await supabase
+  const { data: customer } = await admin
     .from("customers")
     .select("*, customer_cards(stamps, points, rewards_claimed, last_visit_at, card_id)")
     .eq("id", params.id)
+    .eq("business_id", business.id)
     .single();
   if (!customer) return <div>Client introuvable</div>;
 

@@ -1,15 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 import AutomationsManager from "./AutomationsManager";
 
 export const dynamic = "force-dynamic";
 
 export default async function AutomationsPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase.from("businesses").select("id").eq("owner_id", user.id).single();
-  if (!business) return null;
-  const { data: automations } = await supabase.from("automations").select("*").eq("business_id", business.id).order("created_at");
+  const { business, admin } = await getCurrentBusiness();
+  const { data: automations } = await admin.from("automations").select("*").eq("business_id", business.id).order("created_at");
 
   return (
     <div>

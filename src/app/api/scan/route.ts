@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
   const supabase = createClient();
@@ -9,14 +9,16 @@ export async function POST(req: Request) {
   const { qr, amount = 1 } = await req.json();
   if (!qr) return NextResponse.json({ error: "QR manquant" }, { status: 400 });
 
-  const { data: business } = await supabase
+  const admin = createAdminClient();
+
+  const { data: business } = await admin
     .from("businesses")
     .select("id")
     .eq("owner_id", user.id)
     .single();
   if (!business) return NextResponse.json({ error: "Aucun business" }, { status: 400 });
 
-  const { data: customer } = await supabase
+  const { data: customer } = await admin
     .from("customers")
     .select("id, first_name, last_name, business_id")
     .eq("qr_code", qr)
@@ -25,14 +27,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Client introuvable" }, { status: 404 });
   }
 
-  const { data: card } = await supabase
+  const { data: card } = await admin
     .from("cards")
     .select("*")
     .eq("business_id", business.id)
     .single();
   if (!card) return NextResponse.json({ error: "Carte non configurée" }, { status: 400 });
 
-  let { data: cc } = await supabase
+  let { data: cc } = await admin
     .from("customer_cards")
     .select("*")
     .eq("customer_id", customer.id)
@@ -40,7 +42,7 @@ export async function POST(req: Request) {
     .maybeSingle();
 
   if (!cc) {
-    const ins = await supabase
+    const ins = await admin
       .from("customer_cards")
       .insert({ customer_id: customer.id, card_id: card.id })
       .select()
@@ -72,7 +74,7 @@ export async function POST(req: Request) {
     }
   }
 
-  const { data: updated } = await supabase
+  const { data: updated } = await admin
     .from("customer_cards")
     .update({
       stamps,
@@ -84,7 +86,7 @@ export async function POST(req: Request) {
     .select()
     .single();
 
-  await supabase.from("activity").insert({
+  await admin.from("activity").insert({
     business_id: business.id,
     customer_id: customer.id,
     card_id: card.id,
@@ -93,7 +95,7 @@ export async function POST(req: Request) {
   });
 
   if (rewardUnlocked) {
-    await supabase.from("activity").insert({
+    await admin.from("activity").insert({
       business_id: business.id,
       customer_id: customer.id,
       card_id: card.id,

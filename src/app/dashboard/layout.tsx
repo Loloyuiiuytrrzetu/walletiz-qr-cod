@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import LogoutButton from "./LogoutButton";
 import NavItem from "./NavItem";
@@ -42,7 +42,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: business } = await supabase
+  const admin = createAdminClient();
+  const { data: business } = await admin
     .from("businesses")
     .select("id, name, is_active, plan, logo_url")
     .eq("owner_id", user.id)
@@ -52,7 +53,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!business.is_active) redirect("/suspended");
   const userIsAdmin = isAdminEmail(user.email);
 
-  const { count: customerCount } = await supabase
+  const { count: customerCount } = await admin
     .from("customers")
     .select("id", { count: "exact", head: true })
     .eq("business_id", business.id);

@@ -1,21 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 import CampaignsManager from "./CampaignsManager";
 
 export const dynamic = "force-dynamic";
 
 export default async function CampaignsPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase.from("businesses").select("id").eq("owner_id", user.id).single();
-  if (!business) return null;
-  const { data: campaigns } = await supabase
-    .from("campaigns")
-    .select("*")
-    .eq("business_id", business.id)
-    .order("created_at", { ascending: false });
-  const { count: customerCount } = await supabase
-    .from("customers").select("id", { count: "exact", head: true }).eq("business_id", business.id);
+  const { business, admin } = await getCurrentBusiness();
+  const { data: campaigns } = await admin.from("campaigns").select("*").eq("business_id", business.id).order("created_at", { ascending: false });
+  const { count: customerCount } = await admin.from("customers").select("id", { count: "exact", head: true }).eq("business_id", business.id);
 
   return (
     <div>

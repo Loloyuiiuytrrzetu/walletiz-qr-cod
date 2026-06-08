@@ -1,23 +1,15 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentBusiness } from "@/lib/business";
 import CardEditor from "./CardEditor";
 
 export const dynamic = "force-dynamic";
 
 export default async function CardPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: business } = await supabase
-    .from("businesses")
-    .select("id, name")
-    .eq("owner_id", user.id)
-    .single();
-  if (!business) return null;
-  const { data: card } = await supabase
-    .from("cards")
-    .select("*")
-    .eq("business_id", business.id)
-    .single();
+  const { business, admin } = await getCurrentBusiness();
+  let { data: card } = await admin.from("cards").select("*").eq("business_id", business.id).maybeSingle();
+  if (!card) {
+    const { data: created } = await admin.from("cards").insert({ business_id: business.id }).select().single();
+    card = created;
+  }
   return (
     <div>
       <h1 className="text-4xl font-bold tracking-tight text-ink">Ma carte</h1>
