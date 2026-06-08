@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import AuthCard from "../(auth)/AuthCard";
 
-export default function SignupRedirect() {
-  redirect("/login");
+export default function SignupPage() {
+  return <AuthCard initialMode="signup" />;
 }

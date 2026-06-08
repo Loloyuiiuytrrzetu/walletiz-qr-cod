@@ -5,14 +5,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          DEFAULT: "#7B1E2B",
-          light: "#A33848",
-          dark: "#5A1620",
+        burgundy: {
+          DEFAULT: "#7a1232",
+          dark: "#5a0d24",
+          light: "#9a1a40",
         },
+        brand: {
+          DEFAULT: "#7a1232",
+          dark: "#5a0d24",
+          light: "#9a1a40",
+        },
+        ink: "#0f0f10",
       },
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto"],
+        sans: ["Inter", "ui-sans-serif", "system-ui"],
+        display: ["'Inter Tight'", "Inter", "ui-sans-serif"],
+      },
+      borderRadius: {
+        xl: "18px",
+        "2xl": "28px",
+      },
+      boxShadow: {
+        soft: "0 4px 12px rgba(15,15,16,0.06), 0 12px 32px rgba(15,15,16,0.08)",
+        lg2: "0 24px 60px rgba(15,15,16,0.16)",
       },
     },
   },
