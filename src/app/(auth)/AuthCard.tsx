@@ -80,8 +80,9 @@ export default function AuthCard({ initialMode }: { initialMode: Mode }) {
 
         <div className="mt-6 bg-white rounded-2xl shadow-lg2 overflow-hidden">
           <div className="px-8 pt-8 pb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-burgundy flex items-center justify-center text-white text-sm font-bold">W</div>
+            <div className="flex items-center gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/maquette/assets/walletiz-logo.webp" alt="Walletiz" className="h-9 w-auto" />
               <div className="font-display font-bold text-lg text-ink">Walletiz</div>
             </div>
             <h1 className="mt-6 text-2xl font-bold text-ink">
