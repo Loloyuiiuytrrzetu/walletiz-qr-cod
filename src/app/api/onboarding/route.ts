@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 function slugify(s: string) {
   return s
@@ -18,9 +18,9 @@ export async function POST(req: Request) {
   const { name } = await req.json();
   if (!name?.trim()) return NextResponse.json({ error: "Nom requis" }, { status: 400 });
 
-  const slug = `${slugify(name)}-${Math.random().toString(36).slice(2, 6)}`;
+  const admin = createAdminClient();
 
-  const { data: existing } = await supabase
+  const { data: existing } = await admin
     .from("businesses")
     .select("id")
     .eq("owner_id", user.id)
@@ -29,7 +29,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, business_id: existing.id });
   }
 
-  const { data: business, error } = await supabase
+  const slug = `${slugify(name)}-${Math.random().toString(36).slice(2, 6)}`;
+
+  const { data: business, error } = await admin
     .from("businesses")
     .insert({ owner_id: user.id, name, slug })
     .select()
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error?.message ?? "Erreur" }, { status: 500 });
   }
 
-  await supabase.from("cards").insert({ business_id: business.id });
+  await admin.from("cards").insert({ business_id: business.id });
 
   return NextResponse.json({ ok: true, business_id: business.id });
 }
