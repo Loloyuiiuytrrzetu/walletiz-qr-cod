@@ -6,3 +6,6 @@ out
 *.log
 .DS_Store
 .vercel
+
+# build artifacts
+tsconfig.tsbuildinfo

@@ -25,6 +25,16 @@ export default function SignupPage() {
     const { data, error } = await sb.auth.signUp({ email, password });
     if (error || !data.user) { setLoading(false); return setError(error?.message || "Erreur"); }
 
+    // Si la confirmation email est activée dans Supabase, il n'y a PAS de session
+    // à ce stade : inutile d'appeler l'onboarding (il renverrait 401) et surtout
+    // ne pas rediriger vers /dashboard (ce qui repartait en boucle login).
+    if (!data.session) {
+      setLoading(false);
+      return setError(
+        "Compte créé. Vérifie ta boîte mail pour confirmer ton adresse, puis connecte-toi."
+      );
+    }
+
     // Create business via API (uses service role to bypass RLS edge cases)
     const res = await fetch("/api/onboarding", {
       method: "POST",

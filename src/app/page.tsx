@@ -28,11 +28,11 @@ export default function Home() {
           </p>
           <div className="mt-8 flex gap-3">
             <Link href="/signup" className="btn-bordeaux">Démarrer gratuitement</Link>
-            <Link href="/demo" className="px-4 py-2.5 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-sm font-medium">Voir une démo</Link>
+            <a href="#fonctionnalites" className="px-4 py-2.5 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-sm font-medium">Voir une démo</a>
           </div>
         </div>
 
-        <div className="mt-20 grid md:grid-cols-3 gap-6">
+        <div id="fonctionnalites" className="mt-20 grid md:grid-cols-3 gap-6 scroll-mt-24">
           {[
             { t: "Carte tampon ou points", d: "Choisissez votre mécanique. Personnalisez les couleurs, l'expiration, le style." },
             { t: "Notifications push programmables", d: "Campagnes ciblées, automatisations (inactivité, anniversaire, récompense prête)." },
