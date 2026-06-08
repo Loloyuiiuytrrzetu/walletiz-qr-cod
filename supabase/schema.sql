@@ -52,8 +52,88 @@ alter table cards add column if not exists stamps_required int default 10;
 alter table cards add column if not exists reward_label text default 'Un produit offert';
 alter table cards add column if not exists points_per_euro int default 1;
 alter table cards add column if not exists points_for_reward int default 100;
-alter table cards add column if not exists primary_color text default '#7B1E2B';
+alter table cards add column if not exists primary_color text default '#7a1232';
 alter table cards add column if not exists is_active boolean default true;
+alter table cards add column if not exists stamp_shape text default 'circle';
+alter table cards add column if not exists expiration_months int;
+alter table cards add column if not exists style text default 'minimal';
+alter table cards add column if not exists slogan text;
+alter table cards add column if not exists background_url text;
+alter table cards add column if not exists logo_url text;
+
+create table if not exists offers (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  title text not null,
+  description text,
+  discount_label text,
+  starts_at timestamptz default now(),
+  ends_at timestamptz,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+create index if not exists offers_business_idx on offers(business_id);
+
+create table if not exists campaigns (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  title text not null,
+  message text not null,
+  audience text not null default 'all',
+  status text not null default 'draft',
+  scheduled_at timestamptz,
+  sent_at timestamptz,
+  sent_count int default 0,
+  created_at timestamptz default now()
+);
+create index if not exists campaigns_business_idx on campaigns(business_id, created_at desc);
+
+create table if not exists automations (
+  id uuid primary key default gen_random_uuid(),
+  business_id uuid not null references businesses(id) on delete cascade,
+  name text not null,
+  trigger text not null,
+  message text not null,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+create index if not exists automations_business_idx on automations(business_id);
+
+create table if not exists push_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  customer_id uuid not null references customers(id) on delete cascade,
+  endpoint text not null unique,
+  p256dh text not null,
+  auth text not null,
+  user_agent text,
+  created_at timestamptz default now()
+);
+create index if not exists push_subs_customer_idx on push_subscriptions(customer_id);
+
+alter table offers enable row level security;
+alter table campaigns enable row level security;
+alter table automations enable row level security;
+alter table push_subscriptions enable row level security;
+
+drop policy if exists "owner_offers" on offers;
+create policy "owner_offers" on offers for all
+  using (business_id in (select id from businesses where owner_id = auth.uid()))
+  with check (business_id in (select id from businesses where owner_id = auth.uid()));
+
+drop policy if exists "owner_campaigns" on campaigns;
+create policy "owner_campaigns" on campaigns for all
+  using (business_id in (select id from businesses where owner_id = auth.uid()))
+  with check (business_id in (select id from businesses where owner_id = auth.uid()));
+
+drop policy if exists "owner_automations" on automations;
+create policy "owner_automations" on automations for all
+  using (business_id in (select id from businesses where owner_id = auth.uid()))
+  with check (business_id in (select id from businesses where owner_id = auth.uid()));
+
+drop policy if exists "owner_push" on push_subscriptions;
+create policy "owner_push" on push_subscriptions for all
+  using (customer_id in (select c.id from customers c join businesses b on b.id = c.business_id where b.owner_id = auth.uid()))
+  with check (customer_id in (select c.id from customers c join businesses b on b.id = c.business_id where b.owner_id = auth.uid()));
 
 create table if not exists customers (
   id uuid primary key default gen_random_uuid(),
